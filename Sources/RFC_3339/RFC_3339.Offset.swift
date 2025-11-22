@@ -12,12 +12,14 @@ extension RFC_3339 {
     ///
     /// RFC 3339 Section 4.3 defines important semantic differences:
     ///
-    /// - **UTC (Z or +00:00)**: The time is in UTC and the local offset is zero
-    /// - **Unknown local offset (-00:00)**: The time is in UTC but the local offset is unknown
-    /// - **Numeric offset**: The time is in a specific timezone
+    /// - **UTC (Z or +00:00)**: The time is in UTC and UTC is the preferred reference point.
+    ///   Both "Z" and "+00:00" are treated identically and map to `.utc`.
+    /// - **Unknown local offset (-00:00)**: The time is in UTC but the offset to local time is unknown.
+    ///   The string "-00:00" specifically indicates this semantic difference.
+    /// - **Numeric offset**: The time is in a specific timezone relative to UTC.
     ///
     /// The distinction between `.utc` and `.unknownLocalOffset` is semantic only;
-    /// both represent the same instant in time but convey different information about
+    /// both represent the same instant in time (UTC) but convey different information about
     /// the generating system's timezone knowledge.
     ///
     /// ## Usage

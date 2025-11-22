@@ -182,4 +182,55 @@ struct BasicTests {
         #expect(dt.time.year.value == 2024)
         #expect(dt.offset == .utc)
     }
+
+    @Test("Parse +00:00 as UTC")
+    func parsePlusZeroZero() throws {
+        let input = "2024-11-22T14:30:00+00:00"
+        let dt = try RFC_3339.Parser.parse(input)
+
+        #expect(dt.offset == .utc)
+        #expect(dt.offset.seconds == 0)
+    }
+
+    @Test("Z and +00:00 are semantically identical")
+    func zAndPlusZeroZeroIdentical() throws {
+        let withZ = try RFC_3339.Parser.parse("2024-11-22T14:30:00Z")
+        let withPlus = try RFC_3339.Parser.parse("2024-11-22T14:30:00+00:00")
+
+        #expect(withZ.offset == withPlus.offset)
+        #expect(withZ.offset == .utc)
+        #expect(withPlus.offset == .utc)
+    }
+
+    @Test("Parse year 0000")
+    func parseYear0000() throws {
+        let input = "0000-01-01T00:00:00Z"
+        let dt = try RFC_3339.Parser.parse(input)
+
+        #expect(dt.time.year.value == 0)
+        #expect(dt.time.month.value == 1)
+        #expect(dt.time.day.value == 1)
+    }
+
+    @Test("Parse year 9999")
+    func parseYear9999() throws {
+        let input = "9999-12-31T23:59:59Z"
+        let dt = try RFC_3339.Parser.parse(input)
+
+        #expect(dt.time.year.value == 9999)
+        #expect(dt.time.month.value == 12)
+        #expect(dt.time.day.value == 31)
+    }
+
+    @Test("Negative leap second would be second=58")
+    func negativeLeapSecond() throws {
+        // While RFC 3339 grammar allows second=58 for negative leap seconds,
+        // they have never occurred in practice. Our implementation allows them
+        // but doesn't special-case validate them like positive leap seconds.
+        let input = "2024-06-30T23:59:58Z"
+        let dt = try RFC_3339.Parser.parse(input)
+
+        #expect(dt.time.second.value == 58)
+        // Should parse successfully - second=58 is valid per grammar
+    }
 }

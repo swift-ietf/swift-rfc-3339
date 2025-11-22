@@ -328,9 +328,14 @@ extension RFC_3339.Parser {
 
         let offsetSeconds = sign * (offsetHour * 3600 + offsetMinute * 60)
 
-        // Special case: -00:00 means unknown local offset
-        if sign == -1 && offsetSeconds == 0 {
-            return .unknownLocalOffset
+        // Special cases for zero offset
+        if offsetSeconds == 0 {
+            // -00:00 means unknown local offset
+            if sign == -1 {
+                return .unknownLocalOffset
+            }
+            // +00:00 means UTC (same as Z)
+            return .utc
         }
 
         return try RFC_3339.Offset(seconds: offsetSeconds)
