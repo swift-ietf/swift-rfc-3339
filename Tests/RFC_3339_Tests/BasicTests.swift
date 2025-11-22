@@ -154,4 +154,32 @@ struct BasicTests {
         #expect(dt.time.day.value == 22)
         #expect(dt.offset == .utc)
     }
+
+    @Test("Parse lowercase 't' separator")
+    func parseLowercaseT() throws {
+        let input = "2024-11-22t14:30:00Z"
+        let dt = try RFC_3339.Parser.parse(input)
+
+        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.hour.value == 14)
+        #expect(dt.offset == .utc)
+    }
+
+    @Test("Parse lowercase 'z' offset")
+    func parseLowercaseZ() throws {
+        let input = "2024-11-22T14:30:00z"
+        let dt = try RFC_3339.Parser.parse(input)
+
+        #expect(dt.time.year.value == 2024)
+        #expect(dt.offset == .utc)
+    }
+
+    @Test("Parse lowercase 't' and 'z'")
+    func parseLowercaseTAndZ() throws {
+        let input = "2024-11-22t14:30:00z"
+        let dt = try RFC_3339.Parser.parse(input)
+
+        #expect(dt.time.year.value == 2024)
+        #expect(dt.offset == .utc)
+    }
 }

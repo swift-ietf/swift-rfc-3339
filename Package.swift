@@ -15,10 +15,10 @@ import PackageDescription
 let package = Package(
     name: "swift-rfc-3339",
     platforms: [
-        .macOS(.v13),
-        .iOS(.v16),
-        .tvOS(.v16),
-        .watchOS(.v9)
+        .macOS(.v15),
+        .iOS(.v18),
+        .tvOS(.v18),
+        .watchOS(.v11)
     ],
     products: [
         .library(
@@ -27,14 +27,16 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(path: "../swift-standards")
+        .package(path: "../swift-standards"),
+        .package(path: "../swift-incits-4-1986")
     ],
     targets: [
         .target(
             name: "RFC 3339",
             dependencies: [
                 .product(name: "Standards", package: "swift-standards"),
-                .product(name: "StandardTime", package: "swift-standards")
+                .product(name: "StandardTime", package: "swift-standards"),
+                .product(name: "INCITS 4 1986", package: "swift-incits-4-1986")
             ]
         ),
         .testTarget(

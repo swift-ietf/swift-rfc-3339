@@ -106,19 +106,19 @@ extension RFC_3339.Parser {
         }
 
         let year = try parseYear(bytes, index: &index)
-        try expect(bytes, index: &index, byte: UInt8(ascii: "-"))
+        try expect(bytes, index: &index, byte: UInt8.ascii.hyphen)
         let month = try parseMonth(bytes, index: &index)
-        try expect(bytes, index: &index, byte: UInt8(ascii: "-"))
+        try expect(bytes, index: &index, byte: UInt8.ascii.hyphen)
         let day = try parseDay(bytes, index: &index, month: month, year: year)
 
-        // Parse 'T' separator
-        try expect(bytes, index: &index, byte: UInt8(ascii: "T"))
+        // Parse 'T' separator (RFC 3339 allows 'T' or 't')
+        try expectEither(bytes, index: &index, byte1: UInt8.ascii.T, byte2: UInt8.ascii.t)
 
         // Parse partial-time: HH:MM:SS[.fraction]
         let hour = try parseHour(bytes, index: &index)
-        try expect(bytes, index: &index, byte: UInt8(ascii: ":"))
+        try expect(bytes, index: &index, byte: UInt8.ascii.colon)
         let minute = try parseMinute(bytes, index: &index)
-        try expect(bytes, index: &index, byte: UInt8(ascii: ":"))
+        try expect(bytes, index: &index, byte: UInt8.ascii.colon)
         let second = try parseSecond(bytes, index: &index)
 
         // Validate leap second
@@ -131,7 +131,7 @@ extension RFC_3339.Parser {
         var microsecond = 0
         var nanosecond = 0
 
-        if index < bytes.count && bytes[index] == UInt8(ascii: ".") {
+        if index < bytes.count && bytes[index] == UInt8.ascii.period {
             index += 1
             (millisecond, microsecond, nanosecond) = try parseFraction(bytes, index: &index)
         }
@@ -263,7 +263,7 @@ extension RFC_3339.Parser {
 
         // Parse all digits
         while index < bytes.count, let digit = digitValue(bytes[index]) {
-            fractionString.append(Character(UnicodeScalar(UInt32(UInt8(ascii: "0")) + UInt32(digit))!))
+            fractionString.append(Character(UnicodeScalar(UInt32(UInt8.ascii.`0`) + UInt32(digit))!))
             index += 1
         }
 
@@ -294,8 +294,8 @@ extension RFC_3339.Parser {
             throw Error.invalidOffset("missing offset")
         }
 
-        // Check for 'Z' (UTC)
-        if bytes[index] == UInt8(ascii: "Z") {
+        // Check for 'Z' or 'z' (UTC) - RFC 3339 allows both
+        if bytes[index] == UInt8.ascii.Z || bytes[index] == UInt8.ascii.z {
             index += 1
             return .utc
         }
@@ -306,9 +306,9 @@ extension RFC_3339.Parser {
         }
 
         let sign: Int
-        if bytes[index] == UInt8(ascii: "+") {
+        if bytes[index] == UInt8.ascii.plusSign {
             sign = 1
-        } else if bytes[index] == UInt8(ascii: "-") {
+        } else if bytes[index] == UInt8.ascii.hyphen {
             sign = -1
         } else {
             throw Error.invalidOffset("expected '+', '-', or 'Z'")
@@ -316,7 +316,7 @@ extension RFC_3339.Parser {
         index += 1
 
         let offsetHour = try parseTwoDigits(bytes, index: &index)
-        try expect(bytes, index: &index, byte: UInt8(ascii: ":"))
+        try expect(bytes, index: &index, byte: UInt8.ascii.colon)
         let offsetMinute = try parseTwoDigits(bytes, index: &index)
 
         guard offsetHour >= 0 && offsetHour <= 23 else {
@@ -354,16 +354,24 @@ extension RFC_3339.Parser {
 
     /// Convert ASCII digit byte to numeric value
     private static func digitValue(_ byte: UInt8) -> Int? {
-        guard byte >= UInt8(ascii: "0") && byte <= UInt8(ascii: "9") else {
+        guard byte >= UInt8.ascii.`0` && byte <= UInt8.ascii.`9` else {
             return nil
         }
-        return Int(byte - UInt8(ascii: "0"))
+        return Int(byte - UInt8.ascii.`0`)
     }
 
     /// Expect specific byte at current index
     private static func expect(_ bytes: [UInt8], index: inout Int, byte expected: UInt8) throws {
         guard index < bytes.count && bytes[index] == expected else {
             throw Error.invalidFormat("expected '\(Character(UnicodeScalar(expected)))'")
+        }
+        index += 1
+    }
+
+    /// Expect either of two bytes at current index (for case-insensitive parsing)
+    private static func expectEither(_ bytes: [UInt8], index: inout Int, byte1: UInt8, byte2: UInt8) throws {
+        guard index < bytes.count && (bytes[index] == byte1 || bytes[index] == byte2) else {
+            throw Error.invalidFormat("expected '\(Character(UnicodeScalar(byte1)))' or '\(Character(UnicodeScalar(byte2)))'")
         }
         index += 1
     }
