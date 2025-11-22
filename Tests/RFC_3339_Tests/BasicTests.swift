@@ -141,4 +141,17 @@ struct BasicTests {
 
         #expect(formatted == "2024-11-22T14:30:00Z")
     }
+
+    @Test("Parse substring")
+    func parseSubstring() throws {
+        let full = "timestamp: 2024-11-22T14:30:00Z end"
+        let substring = full.dropFirst(11).dropLast(4)  // Extract just the timestamp
+
+        let dt = try RFC_3339.Parser.parse(substring)
+
+        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.month.value == 11)
+        #expect(dt.time.day.value == 22)
+        #expect(dt.offset == .utc)
+    }
 }

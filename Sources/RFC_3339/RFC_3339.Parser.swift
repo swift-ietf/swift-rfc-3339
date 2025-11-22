@@ -91,10 +91,10 @@ extension RFC_3339.Parser {
     /// - Parameter string: RFC 3339 formatted timestamp
     /// - Returns: Parsed date-time
     /// - Throws: ``Error`` if format is invalid or components out of range
-    public static func parse(_ string: String) throws -> RFC_3339.DateTime {
+    public static func parse(_ string: some StringProtocol) throws -> RFC_3339.DateTime {
         // Minimum valid: "YYYY-MM-DDTHH:MM:SSZ" = 20 characters
         guard string.count >= 20 else {
-            throw Error.invalidFormat(string)
+            throw Error.invalidFormat(String(string))
         }
 
         let bytes = Array(string.utf8)
@@ -102,7 +102,7 @@ extension RFC_3339.Parser {
 
         // Parse full-date: YYYY-MM-DD
         guard index + 10 <= bytes.count else {
-            throw Error.invalidFormat(string)
+            throw Error.invalidFormat(String(string))
         }
 
         let year = try parseYear(bytes, index: &index)
@@ -141,7 +141,7 @@ extension RFC_3339.Parser {
 
         // Ensure we consumed the entire string
         guard index == bytes.count else {
-            throw Error.invalidFormat(string)
+            throw Error.invalidFormat(String(string))
         }
 
         // Construct Time
