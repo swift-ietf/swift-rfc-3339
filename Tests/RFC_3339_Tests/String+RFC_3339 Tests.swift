@@ -16,7 +16,7 @@ struct StringExtensionParseTests {
         let timestamp = "2024-11-22T14:30:00Z"
         let dt = try timestamp.rfc3339.parse()
 
-        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.year == 2024)
     }
 
     @Test("String extension: parse with offset")
@@ -177,7 +177,7 @@ struct StringTimeIntegrationTests {
         #expect(timestamp.rfc3339.isValid)
 
         let dt = try timestamp.rfc3339.parse()
-        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.year == 2024)
     }
 
     @Test("Format then validate")

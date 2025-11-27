@@ -77,7 +77,7 @@ extension RFC_3339.Formatter {
         result.reserveCapacity(35)  // Typical length with nanoseconds
 
         // full-date: YYYY-MM-DD
-        appendYear(&result, time.year.value)
+        appendYear(&result, time.year.rawValue)
         result.append("-")
         appendTwoDigits(&result, time.month.rawValue)
         result.append("-")

@@ -16,7 +16,7 @@ struct ParserUTCTests {
         let input = "2024-11-22T14:30:00Z"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.year == 2024)
         #expect(dt.time.month == 11)
         #expect(dt.time.day == 22)
         #expect(dt.time.hour.value == 14)
@@ -30,7 +30,7 @@ struct ParserUTCTests {
         let input = "2024-11-22T14:30:00z"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.year == 2024)
         #expect(dt.offset == .utc)
     }
 
@@ -61,7 +61,7 @@ struct ParserNumericOffsetTests {
         let input = "2024-11-22T14:30:00+05:30"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.year == 2024)
         #expect(dt.offset == .offset(seconds: 19800))  // 5.5 hours
     }
 
@@ -70,7 +70,7 @@ struct ParserNumericOffsetTests {
         let input = "2024-11-22T14:30:00-08:00"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.year == 2024)
         #expect(dt.offset == .offset(seconds: -28800))  // -8 hours
     }
 
@@ -90,7 +90,7 @@ struct ParserFractionalSecondsTests {
         let input = "1985-04-12T23:20:50.52Z"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.year.value == 1985)
+        #expect(dt.time.year == 1985)
         #expect(dt.time.millisecond.value == 520)
         #expect(dt.offset == .utc)
     }
@@ -142,7 +142,7 @@ struct ParserCaseInsensitivityTests {
         let input = "2024-11-22t14:30:00Z"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.year == 2024)
         #expect(dt.time.hour.value == 14)
         #expect(dt.offset == .utc)
     }
@@ -152,7 +152,7 @@ struct ParserCaseInsensitivityTests {
         let input = "2024-11-22t14:30:00z"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.year == 2024)
         #expect(dt.offset == .utc)
     }
 }
@@ -166,7 +166,7 @@ struct ParserStringProtocolTests {
 
         let dt = try RFC_3339.Parser.parse(substring)
 
-        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.year == 2024)
         #expect(dt.time.month == 11)
         #expect(dt.time.day == 22)
         #expect(dt.offset == .utc)

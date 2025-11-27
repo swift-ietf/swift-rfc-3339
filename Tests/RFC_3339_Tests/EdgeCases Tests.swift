@@ -17,7 +17,7 @@ struct YearBoundaryTests {
         let input = "0000-01-01T00:00:00Z"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.year.value == 0)
+        #expect(dt.time.year == 0)
         #expect(dt.time.month == 1)
         #expect(dt.time.day == 1)
     }
@@ -27,7 +27,7 @@ struct YearBoundaryTests {
         let input = "9999-12-31T23:59:59Z"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.year.value == 9999)
+        #expect(dt.time.year == 9999)
         #expect(dt.time.month == 12)
         #expect(dt.time.day == 31)
     }
@@ -269,7 +269,7 @@ struct ComponentBoundaryTests {
         let input = "2024-02-29T12:00:00Z"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.year.value == 2024)
+        #expect(dt.time.year == 2024)
         #expect(dt.time.month == 2)
         #expect(dt.time.day == 29)
     }
