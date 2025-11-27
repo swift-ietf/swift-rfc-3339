@@ -4,6 +4,7 @@
 // Comprehensive tests for RFC_3339.Formatter
 
 import Testing
+
 @testable import RFC_3339
 
 // MARK: - Basic Formatting
@@ -62,10 +63,10 @@ struct FormatterNumericOffsetTests {
             (-43200, "2024-01-01T00:00:00-12:00"),  // UTC-12
             (-28800, "2024-01-01T00:00:00-08:00"),  // PST
             (-18000, "2024-01-01T00:00:00-05:00"),  // EST
-            (3600, "2024-01-01T00:00:00+01:00"),    // CET
-            (19800, "2024-01-01T00:00:00+05:30"),   // IST
-            (32400, "2024-01-01T00:00:00+09:00"),   // JST
-            (43200, "2024-01-01T00:00:00+12:00")    // UTC+12
+            (3600, "2024-01-01T00:00:00+01:00"),  // CET
+            (19800, "2024-01-01T00:00:00+05:30"),  // IST
+            (32400, "2024-01-01T00:00:00+09:00"),  // JST
+            (43200, "2024-01-01T00:00:00+12:00"),  // UTC+12
         ]
 
         for (seconds, expected) in testCases {
@@ -87,7 +88,17 @@ struct FormatterFractionalSecondsTests {
 
     @Test("Format with various precisions")
     func formatVariousPrecisions() throws {
-        let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 123, microsecond: 456, nanosecond: 789)
+        let time = try Time(
+            year: 2024,
+            month: 1,
+            day: 1,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 123,
+            microsecond: 456,
+            nanosecond: 789
+        )
 
         let testCases: [(precision: Int, expected: String)] = [
             (0, "2024-01-01T00:00:00Z"),
@@ -95,7 +106,7 @@ struct FormatterFractionalSecondsTests {
             (2, "2024-01-01T00:00:00.12Z"),
             (3, "2024-01-01T00:00:00.123Z"),
             (6, "2024-01-01T00:00:00.123456Z"),
-            (9, "2024-01-01T00:00:00.123456789Z")
+            (9, "2024-01-01T00:00:00.123456789Z"),
         ]
 
         for (precision, expected) in testCases {
@@ -115,7 +126,15 @@ struct FormatterFractionalSecondsTests {
 
     @Test("Format without precision includes non-zero fractional seconds")
     func formatIncludesNonZeroFraction() throws {
-        let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 123)
+        let time = try Time(
+            year: 2024,
+            month: 1,
+            day: 1,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 123
+        )
         let formatted = RFC_3339.Formatter.format(time, offset: .utc)
 
         #expect(formatted == "2024-01-01T00:00:00.123Z")
@@ -135,7 +154,15 @@ struct FormatterDateTimeTests {
 
     @Test("Format DateTime with precision")
     func formatDateTimeWithPrecision() throws {
-        let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0, millisecond: 123)
+        let time = try Time(
+            year: 2024,
+            month: 11,
+            day: 22,
+            hour: 14,
+            minute: 30,
+            second: 0,
+            millisecond: 123
+        )
         let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
         let formatted = RFC_3339.Formatter.format(dateTime, precision: 3)
 

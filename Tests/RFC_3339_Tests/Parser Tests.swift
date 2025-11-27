@@ -4,6 +4,7 @@
 // Comprehensive tests for RFC_3339.Parser
 
 import Testing
+
 @testable import RFC_3339
 
 // MARK: - Basic Parsing
@@ -61,7 +62,7 @@ struct ParserNumericOffsetTests {
         let dt = try RFC_3339.Parser.parse(input)
 
         #expect(dt.time.year.value == 2024)
-        #expect(dt.offset == .offset(seconds: 19800)) // 5.5 hours
+        #expect(dt.offset == .offset(seconds: 19800))  // 5.5 hours
     }
 
     @Test("Parse timestamp with negative offset")
@@ -70,7 +71,7 @@ struct ParserNumericOffsetTests {
         let dt = try RFC_3339.Parser.parse(input)
 
         #expect(dt.time.year.value == 2024)
-        #expect(dt.offset == .offset(seconds: -28800)) // -8 hours
+        #expect(dt.offset == .offset(seconds: -28800))  // -8 hours
     }
 
     @Test("Parse unknown local offset")
@@ -97,11 +98,11 @@ struct ParserFractionalSecondsTests {
     @Test("Parse various fractional second precisions")
     func parseVariousPrecisions() throws {
         let inputs = [
-            ("2024-01-01T00:00:00.1Z", 100),        // 1 digit
-            ("2024-01-01T00:00:00.12Z", 120),       // 2 digits
-            ("2024-01-01T00:00:00.123Z", 123),      // 3 digits
-            ("2024-01-01T00:00:00.1234Z", 123),     // 4 digits (truncated)
-            ("2024-01-01T00:00:00.123456789Z", 123) // 9 digits (truncated)
+            ("2024-01-01T00:00:00.1Z", 100),  // 1 digit
+            ("2024-01-01T00:00:00.12Z", 120),  // 2 digits
+            ("2024-01-01T00:00:00.123Z", 123),  // 3 digits
+            ("2024-01-01T00:00:00.1234Z", 123),  // 4 digits (truncated)
+            ("2024-01-01T00:00:00.123456789Z", 123),  // 9 digits (truncated)
         ]
 
         for (input, expectedMillis) in inputs {

@@ -3,5 +3,6 @@
 
 parent_config: https://raw.githubusercontent.com/swift-standards/swift-standards/main/.swiftlint.yml
 
-# Package-specific overrides (if needed)
-# Add any swift-rfc-3339 specific rules here
+# Package-specific overrides
+disabled_rules:
+  - opening_brace

@@ -68,7 +68,11 @@ extension RFC_3339.Formatter {
     ///   - offset: UTC offset
     ///   - precision: Optional fractional seconds precision (0-9 digits). If nil, includes all non-zero sub-second components.
     /// - Returns: RFC 3339 formatted string
-    public static func format(_ time: Time, offset: RFC_3339.Offset, precision: Int? = nil) -> String {
+    public static func format(
+        _ time: Time,
+        offset: RFC_3339.Offset,
+        precision: Int? = nil
+    ) -> String {
         var result = ""
         result.reserveCapacity(35)  // Typical length with nanoseconds
 

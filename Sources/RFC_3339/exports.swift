@@ -9,6 +9,6 @@
 //
 // Reference: https://www.rfc-editor.org/rfc/rfc3339
 
-@_exported import Standards
-@_exported import StandardTime
 @_exported import INCITS_4_1986
+@_exported import StandardTime
+@_exported import Standards

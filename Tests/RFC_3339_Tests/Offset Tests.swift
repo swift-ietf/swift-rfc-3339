@@ -4,6 +4,7 @@
 // Comprehensive tests for RFC_3339.Offset
 
 import Testing
+
 @testable import RFC_3339
 
 // MARK: - Offset Creation
@@ -80,7 +81,7 @@ struct OffsetSemanticsTests {
 
         #expect(utc != unknown)
         #expect(utc.seconds == unknown.seconds)  // Same seconds
-        #expect(utc.isUTC && unknown.isUTC)     // Both are UTC
+        #expect(utc.isUTC && unknown.isUTC)  // Both are UTC
     }
 
     @Test("Numeric offset with zero seconds becomes UTC via init")
@@ -163,7 +164,7 @@ struct CommonTimezoneTests {
             ("CET (UTC+1)", 3600),
             ("IST (UTC+5:30)", 19800),
             ("JST (UTC+9)", 32400),
-            ("UTC+12", 43200)
+            ("UTC+12", 43200),
         ]
 
         for (name, seconds) in timezones {

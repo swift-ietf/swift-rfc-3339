@@ -5,6 +5,7 @@
 // Parse → Format → Parse cycles should preserve semantics
 
 import Testing
+
 @testable import RFC_3339
 
 @Suite("RFC 3339 - Round-trip Conversions")
@@ -36,7 +37,7 @@ struct RoundTripTests {
         "2024-11-22T14:30:00+05:30",
         "0000-01-01T00:00:00Z",
         "9999-12-31T23:59:59Z",
-        "2015-06-30T23:59:60Z"
+        "2015-06-30T23:59:60Z",
     ])
     func roundTripVariousTimestamps(timestamp: String) throws {
         let dt = try RFC_3339.Parser.parse(timestamp)
@@ -112,7 +113,7 @@ struct RoundTripTests {
             "2024-01-01T00:00:00.12Z",
             "2024-01-01T00:00:00.123Z",
             "2024-01-01T00:00:00.123456Z",
-            "2024-01-01T00:00:00.123456789Z"
+            "2024-01-01T00:00:00.123456789Z",
         ]
 
         for input in testCases {
@@ -128,7 +129,15 @@ struct RoundTripTests {
 
     @Test("Round-trip format with explicit precision")
     func roundTripWithExplicitPrecision() throws {
-        let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 123)
+        let time = try Time(
+            year: 2024,
+            month: 1,
+            day: 1,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 123
+        )
         let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
 
         // Format with specific precision

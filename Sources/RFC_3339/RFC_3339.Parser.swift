@@ -197,7 +197,12 @@ extension RFC_3339.Parser {
     }
 
     /// Parse 2-digit day (01-31, validated for month)
-    private static func parseDay(_ bytes: [UInt8], index: inout Int, month: Int, year: Int) throws -> Int {
+    private static func parseDay(
+        _ bytes: [UInt8],
+        index: inout Int,
+        month: Int,
+        year: Int
+    ) throws -> Int {
         guard index + 2 <= bytes.count else {
             throw Error.invalidDay(String(decoding: bytes[index...], as: UTF8.self))
         }
@@ -207,7 +212,8 @@ extension RFC_3339.Parser {
         // Validate day is in valid range for month/year
         let y = Time.Year(year)
         guard let m = try? Time.Month(month),
-              (try? Time.Month.Day(day, in: m, year: y)) != nil else {
+            (try? Time.Month.Day(day, in: m, year: y)) != nil
+        else {
             throw Error.invalidDay("\(day) for month \(month), year \(year)")
         }
 
@@ -258,12 +264,15 @@ extension RFC_3339.Parser {
 
     /// Parse fractional seconds: .DIGIT+
     /// Returns (millisecond, microsecond, nanosecond)
-    private static func parseFraction(_ bytes: [UInt8], index: inout Int) throws -> (Int, Int, Int) {
+    private static func parseFraction(_ bytes: [UInt8], index: inout Int) throws -> (Int, Int, Int)
+    {
         var fractionString = ""
 
         // Parse all digits
         while index < bytes.count, let digit = digitValue(bytes[index]) {
-            fractionString.append(Character(UnicodeScalar(UInt32(UInt8.ascii.`0`) + UInt32(digit))!))
+            fractionString.append(
+                Character(UnicodeScalar(UInt32(UInt8.ascii.`0`) + UInt32(digit))!)
+            )
             index += 1
         }
 
@@ -348,8 +357,9 @@ extension RFC_3339.Parser {
     /// Parse exactly 2 digits as integer
     private static func parseTwoDigits(_ bytes: [UInt8], index: inout Int) throws -> Int {
         guard index + 2 <= bytes.count,
-              let d1 = digitValue(bytes[index]),
-              let d2 = digitValue(bytes[index + 1]) else {
+            let d1 = digitValue(bytes[index]),
+            let d2 = digitValue(bytes[index + 1])
+        else {
             throw Error.invalidFormat("expected two digits")
         }
 
@@ -374,9 +384,16 @@ extension RFC_3339.Parser {
     }
 
     /// Expect either of two bytes at current index (for case-insensitive parsing)
-    private static func expectEither(_ bytes: [UInt8], index: inout Int, byte1: UInt8, byte2: UInt8) throws {
+    private static func expectEither(
+        _ bytes: [UInt8],
+        index: inout Int,
+        byte1: UInt8,
+        byte2: UInt8
+    ) throws {
         guard index < bytes.count && (bytes[index] == byte1 || bytes[index] == byte2) else {
-            throw Error.invalidFormat("expected '\(Character(UnicodeScalar(byte1)))' or '\(Character(UnicodeScalar(byte2)))'")
+            throw Error.invalidFormat(
+                "expected '\(Character(UnicodeScalar(byte1)))' or '\(Character(UnicodeScalar(byte2)))'"
+            )
         }
         index += 1
     }

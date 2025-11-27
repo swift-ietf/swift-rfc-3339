@@ -5,6 +5,7 @@
 // Tests boundary conditions and special cases per RFC 3339
 
 import Testing
+
 @testable import RFC_3339
 
 // MARK: - Year Range Edge Cases
@@ -102,7 +103,7 @@ struct OffsetBoundaryTests {
         let input = "2024-01-01T00:00:00+23:59"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.offset == .offset(seconds: 86340)) // 23*3600 + 59*60
+        #expect(dt.offset == .offset(seconds: 86340))  // 23*3600 + 59*60
     }
 
     @Test("Maximum negative offset (-23:59)")
@@ -187,7 +188,15 @@ struct FractionalSecondEdgeCaseTests {
 
     @Test("Format precision 0 omits decimal point")
     func formatPrecisionZero() throws {
-        let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 123)
+        let time = try Time(
+            year: 2024,
+            month: 1,
+            day: 1,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 123
+        )
         let formatted = RFC_3339.Formatter.format(time, offset: .utc, precision: 0)
 
         #expect(formatted == "2024-01-01T00:00:00Z")
@@ -196,7 +205,17 @@ struct FractionalSecondEdgeCaseTests {
 
     @Test("Format precision 9 (nanoseconds)")
     func formatPrecisionNine() throws {
-        let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 1, microsecond: 2, nanosecond: 3)
+        let time = try Time(
+            year: 2024,
+            month: 1,
+            day: 1,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 1,
+            microsecond: 2,
+            nanosecond: 3
+        )
         let formatted = RFC_3339.Formatter.format(time, offset: .utc, precision: 9)
 
         #expect(formatted == "2024-01-01T00:00:00.001002003Z")
