@@ -18,8 +18,8 @@ struct YearBoundaryTests {
         let dt = try RFC_3339.Parser.parse(input)
 
         #expect(dt.time.year.value == 0)
-        #expect(dt.time.month.value == 1)
-        #expect(dt.time.day.value == 1)
+        #expect(dt.time.month == 1)
+        #expect(dt.time.day == 1)
     }
 
     @Test("Parse year 9999 (maximum allowed)")
@@ -28,8 +28,8 @@ struct YearBoundaryTests {
         let dt = try RFC_3339.Parser.parse(input)
 
         #expect(dt.time.year.value == 9999)
-        #expect(dt.time.month.value == 12)
-        #expect(dt.time.day.value == 31)
+        #expect(dt.time.month == 12)
+        #expect(dt.time.day == 31)
     }
 
     @Test("Format year 0000")
@@ -59,8 +59,8 @@ struct LeapSecondTests {
         let dt = try RFC_3339.Parser.parse(input)
 
         #expect(dt.time.second.value == 60)
-        #expect(dt.time.month.value == 12)
-        #expect(dt.time.day.value == 31)
+        #expect(dt.time.month == 12)
+        #expect(dt.time.day == 31)
     }
 
     @Test("Leap second on June 30")
@@ -69,8 +69,8 @@ struct LeapSecondTests {
         let dt = try RFC_3339.Parser.parse(input)
 
         #expect(dt.time.second.value == 60)
-        #expect(dt.time.month.value == 6)
-        #expect(dt.time.day.value == 30)
+        #expect(dt.time.month == 6)
+        #expect(dt.time.day == 30)
     }
 
     @Test("Negative leap second (second=58)")
@@ -251,8 +251,8 @@ struct ComponentBoundaryTests {
         let input = "2024-01-01T00:00:00Z"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.month.value == 1)
-        #expect(dt.time.day.value == 1)
+        #expect(dt.time.month == 1)
+        #expect(dt.time.day == 1)
     }
 
     @Test("Last day of year")
@@ -260,8 +260,8 @@ struct ComponentBoundaryTests {
         let input = "2024-12-31T23:59:59Z"
         let dt = try RFC_3339.Parser.parse(input)
 
-        #expect(dt.time.month.value == 12)
-        #expect(dt.time.day.value == 31)
+        #expect(dt.time.month == 12)
+        #expect(dt.time.day == 31)
     }
 
     @Test("Leap year February 29")
@@ -270,7 +270,7 @@ struct ComponentBoundaryTests {
         let dt = try RFC_3339.Parser.parse(input)
 
         #expect(dt.time.year.value == 2024)
-        #expect(dt.time.month.value == 2)
-        #expect(dt.time.day.value == 29)
+        #expect(dt.time.month == 2)
+        #expect(dt.time.day == 29)
     }
 }

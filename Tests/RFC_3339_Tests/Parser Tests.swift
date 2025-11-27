@@ -17,8 +17,8 @@ struct ParserUTCTests {
         let dt = try RFC_3339.Parser.parse(input)
 
         #expect(dt.time.year.value == 2024)
-        #expect(dt.time.month.value == 11)
-        #expect(dt.time.day.value == 22)
+        #expect(dt.time.month == 11)
+        #expect(dt.time.day == 22)
         #expect(dt.time.hour.value == 14)
         #expect(dt.time.minute.value == 30)
         #expect(dt.time.second.value == 0)
@@ -120,8 +120,8 @@ struct ParserLeapSecondTests {
         let dt = try RFC_3339.Parser.parse(input)
 
         #expect(dt.time.second.value == 60)
-        #expect(dt.time.month.value == 12)
-        #expect(dt.time.day.value == 31)
+        #expect(dt.time.month == 12)
+        #expect(dt.time.day == 31)
     }
 
     @Test("Leap second on June 30")
@@ -130,8 +130,8 @@ struct ParserLeapSecondTests {
         let dt = try RFC_3339.Parser.parse(input)
 
         #expect(dt.time.second.value == 60)
-        #expect(dt.time.month.value == 6)
-        #expect(dt.time.day.value == 30)
+        #expect(dt.time.month == 6)
+        #expect(dt.time.day == 30)
     }
 }
 
@@ -167,8 +167,8 @@ struct ParserStringProtocolTests {
         let dt = try RFC_3339.Parser.parse(substring)
 
         #expect(dt.time.year.value == 2024)
-        #expect(dt.time.month.value == 11)
-        #expect(dt.time.day.value == 22)
+        #expect(dt.time.month == 11)
+        #expect(dt.time.day == 22)
         #expect(dt.offset == .utc)
     }
 }

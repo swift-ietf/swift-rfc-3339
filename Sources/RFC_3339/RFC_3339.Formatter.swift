@@ -79,9 +79,9 @@ extension RFC_3339.Formatter {
         // full-date: YYYY-MM-DD
         appendYear(&result, time.year.value)
         result.append("-")
-        appendTwoDigits(&result, time.month.value)
+        appendTwoDigits(&result, time.month.rawValue)
         result.append("-")
-        appendTwoDigits(&result, time.day.value)
+        appendTwoDigits(&result, time.day.rawValue)
 
         // 'T' separator
         result.append("T")
