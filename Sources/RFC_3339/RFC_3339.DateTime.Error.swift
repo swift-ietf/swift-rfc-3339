@@ -58,7 +58,8 @@ extension RFC_3339.DateTime.Error: CustomStringConvertible {
         case .invalidOffset(let value):
             return "Invalid timezone offset: '\(value)'"
         case .invalidLeapSecond(let month, let day):
-            return "Leap second not allowed on month \(month), day \(day) (only June 30 or December 31)"
+            return
+                "Leap second not allowed on month \(month), day \(day) (only June 30 or December 31)"
         }
     }
 }

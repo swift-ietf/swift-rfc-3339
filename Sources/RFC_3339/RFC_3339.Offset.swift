@@ -198,10 +198,10 @@ extension RFC_3339.Offset: UInt8.ASCII.Serializable {
         }
 
         guard let h1 = Self.digitValue(arr[1]),
-              let h2 = Self.digitValue(arr[2]),
-              arr[3] == UInt8.ascii.colon,
-              let m1 = Self.digitValue(arr[4]),
-              let m2 = Self.digitValue(arr[5])
+            let h2 = Self.digitValue(arr[2]),
+            arr[3] == UInt8.ascii.colon,
+            let m1 = Self.digitValue(arr[4]),
+            let m2 = Self.digitValue(arr[5])
         else {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
         }

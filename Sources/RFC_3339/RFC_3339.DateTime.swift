@@ -419,7 +419,10 @@ extension RFC_3339.DateTime {
 
     /// Parse fractional seconds: .DIGIT+
     /// Returns (millisecond, microsecond, nanosecond)
-    private static func parseFraction(_ bytes: [UInt8], index: inout Int) throws(Error) -> (Int, Int, Int) {
+    private static func parseFraction(
+        _ bytes: [UInt8],
+        index: inout Int
+    ) throws(Error) -> (Int, Int, Int) {
         var fractionString = ""
 
         // Parse all digits
@@ -452,7 +455,10 @@ extension RFC_3339.DateTime {
     }
 
     /// Parse time offset: Z | (+|-)HH:MM
-    private static func parseOffset(_ bytes: [UInt8], index: inout Int) throws(Error) -> RFC_3339.Offset {
+    private static func parseOffset(
+        _ bytes: [UInt8],
+        index: inout Int
+    ) throws(Error) -> RFC_3339.Offset {
         guard index < bytes.count else {
             throw Error.invalidOffset("missing offset")
         }
@@ -530,7 +536,11 @@ extension RFC_3339.DateTime {
     }
 
     /// Expect specific byte at current index
-    private static func expect(_ bytes: [UInt8], index: inout Int, byte expected: UInt8) throws(Error) {
+    private static func expect(
+        _ bytes: [UInt8],
+        index: inout Int,
+        byte expected: UInt8
+    ) throws(Error) {
         guard index < bytes.count && bytes[index] == expected else {
             throw Error.invalidFormat("expected '\(Character(UnicodeScalar(expected)))'")
         }
