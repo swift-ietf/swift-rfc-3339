@@ -13,11 +13,11 @@ struct RoundTripTests {
     @Test("Round-trip: parse then format")
     func roundTrip() throws {
         let original = "1985-04-12T23:20:50.52Z"
-        let dt = try RFC_3339.Parser.parse(original)
-        let formatted = RFC_3339.Formatter.format(dt)
+        let dt = try RFC_3339.DateTime(original)
+        let formatted = String(dt)
 
         // Parse again to compare
-        let dt2 = try RFC_3339.Parser.parse(formatted)
+        let dt2 = try RFC_3339.DateTime(formatted)
 
         #expect(dt.time.year == dt2.time.year)
         #expect(dt.time.month == dt2.time.month)
@@ -40,9 +40,9 @@ struct RoundTripTests {
         "2015-06-30T23:59:60Z",
     ])
     func roundTripVariousTimestamps(timestamp: String) throws {
-        let dt = try RFC_3339.Parser.parse(timestamp)
-        let formatted = RFC_3339.Formatter.format(dt)
-        let dt2 = try RFC_3339.Parser.parse(formatted)
+        let dt = try RFC_3339.DateTime(timestamp)
+        let formatted = String(dt)
+        let dt2 = try RFC_3339.DateTime(formatted)
 
         // Verify semantic equality (not string equality, as formatter may normalize)
         #expect(dt.time.year == dt2.time.year)
@@ -61,14 +61,14 @@ struct RoundTripTests {
     func roundTripDifferentCase() throws {
         // Input has lowercase, output will have uppercase
         let input = "2024-11-22t14:30:00z"
-        let dt = try RFC_3339.Parser.parse(input)
-        let formatted = RFC_3339.Formatter.format(dt)
+        let dt = try RFC_3339.DateTime(input)
+        let formatted = String(dt)
 
         // Should normalize to uppercase
         #expect(formatted == "2024-11-22T14:30:00Z")
 
         // But parse back should be identical
-        let dt2 = try RFC_3339.Parser.parse(formatted)
+        let dt2 = try RFC_3339.DateTime(formatted)
         #expect(dt.time.year == dt2.time.year)
         #expect(dt.offset == dt2.offset)
     }
@@ -76,32 +76,32 @@ struct RoundTripTests {
     @Test("Round-trip +00:00 normalizes to Z")
     func roundTripPlusZeroZero() throws {
         let input = "2024-11-22T14:30:00+00:00"
-        let dt = try RFC_3339.Parser.parse(input)
+        let dt = try RFC_3339.DateTime(input)
 
         #expect(dt.offset == .utc)
 
-        let formatted = RFC_3339.Formatter.format(dt)
+        let formatted = String(dt)
 
         // Should normalize to Z (preferred form)
         #expect(formatted == "2024-11-22T14:30:00Z")
 
-        let dt2 = try RFC_3339.Parser.parse(formatted)
+        let dt2 = try RFC_3339.DateTime(formatted)
         #expect(dt.offset == dt2.offset)
     }
 
     @Test("Round-trip preserves unknown local offset")
     func roundTripUnknownLocalOffset() throws {
         let input = "2024-11-22T14:30:00-00:00"
-        let dt = try RFC_3339.Parser.parse(input)
+        let dt = try RFC_3339.DateTime(input)
 
         #expect(dt.offset == .unknownLocalOffset)
 
-        let formatted = RFC_3339.Formatter.format(dt)
+        let formatted = String(dt)
 
         // Should preserve -00:00 (not Z)
         #expect(formatted == "2024-11-22T14:30:00-00:00")
 
-        let dt2 = try RFC_3339.Parser.parse(formatted)
+        let dt2 = try RFC_3339.DateTime(formatted)
         #expect(dt.offset == dt2.offset)
         #expect(dt2.offset == .unknownLocalOffset)
     }
@@ -117,9 +117,9 @@ struct RoundTripTests {
         ]
 
         for input in testCases {
-            let dt = try RFC_3339.Parser.parse(input)
-            let formatted = RFC_3339.Formatter.format(dt)
-            let dt2 = try RFC_3339.Parser.parse(formatted)
+            let dt = try RFC_3339.DateTime(input)
+            let formatted = String(dt)
+            let dt2 = try RFC_3339.DateTime(formatted)
 
             #expect(dt.time.millisecond == dt2.time.millisecond)
             #expect(dt.time.microsecond == dt2.time.microsecond)
@@ -138,14 +138,14 @@ struct RoundTripTests {
             second: 0,
             millisecond: 123
         )
-        let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
+        let dateTime = RFC_3339.DateTime(time: time, offset: .utc, precision: 6)
 
         // Format with specific precision
-        let formatted = RFC_3339.Formatter.format(dateTime, precision: 6)
+        let formatted = String(dateTime)
         #expect(formatted == "2024-01-01T00:00:00.123000Z")
 
         // Parse back
-        let dt2 = try RFC_3339.Parser.parse(formatted)
+        let dt2 = try RFC_3339.DateTime(formatted)
 
         #expect(dt2.time.millisecond.value == 123)
         #expect(dt2.time.microsecond.value == 0)

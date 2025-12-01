@@ -1,7 +1,5 @@
 // String+RFC_3339.swift
 // swift-rfc-3339
-//
-// RFC 3339 extensions for String
 
 extension RFC_3339 {
     /// RFC 3339 wrapper for String
@@ -56,7 +54,7 @@ extension RFC_3339.StringWrapper {
     /// Parse string as RFC 3339 timestamp
     ///
     /// - Returns: Parsed date-time
-    /// - Throws: ``RFC_3339.Parser.Error`` if format is invalid
+    /// - Throws: ``RFC_3339.DateTime.Error`` if format is invalid
     ///
     /// ## Examples
     ///
@@ -68,7 +66,7 @@ extension RFC_3339.StringWrapper {
     /// let dt3 = try "1990-12-31T23:59:60Z".rfc3339.parse()  // leap second
     /// ```
     public func parse() throws -> RFC_3339.DateTime {
-        try RFC_3339.Parser.parse(value)
+        try RFC_3339.DateTime(value)
     }
 
     /// Check if string is a valid RFC 3339 timestamp

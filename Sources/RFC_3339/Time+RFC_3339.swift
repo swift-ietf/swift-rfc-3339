@@ -1,7 +1,5 @@
 // Time+RFC_3339.swift
 // swift-rfc-3339
-//
-// RFC 3339 extensions for Time
 
 extension RFC_3339 {
     /// RFC 3339 wrapper for Time
@@ -78,6 +76,7 @@ extension RFC_3339.TimeWrapper {
     /// // "2024-11-22T14:30:00.000000Z"
     /// ```
     public func format(offset: RFC_3339.Offset = .utc, precision: Int? = nil) -> String {
-        RFC_3339.Formatter.format(value, offset: offset, precision: precision)
+        let dateTime = RFC_3339.DateTime(time: value, offset: offset, precision: precision)
+        return String(dateTime)
     }
 }

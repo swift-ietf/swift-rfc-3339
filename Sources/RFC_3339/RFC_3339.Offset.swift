@@ -1,7 +1,7 @@
 // RFC_3339.Offset.swift
 // swift-rfc-3339
-//
-// RFC 3339 Section 4.3: Internet Date/Time Format - Offset specification
+
+public import INCITS_4_1986
 
 extension RFC_3339 {
     /// UTC offset for RFC 3339 timestamps
@@ -18,40 +18,20 @@ extension RFC_3339 {
     ///   The string "-00:00" specifically indicates this semantic difference.
     /// - **Numeric offset**: The time is in a specific timezone relative to UTC.
     ///
-    /// The distinction between `.utc` and `.unknownLocalOffset` is semantic only;
-    /// both represent the same instant in time (UTC) but convey different information about
-    /// the generating system's timezone knowledge.
-    ///
-    /// ## Usage
+    /// ## Example
     ///
     /// ```swift
-    /// // UTC time
-    /// let utc = RFC_3339.Offset.utc
-    /// // Formats as "Z" or "+00:00"
+    /// // Parse from string
+    /// let offset = try RFC_3339.Offset("+05:30")
     ///
-    /// // Unknown local offset
-    /// let unknown = RFC_3339.Offset.unknownLocalOffset
-    /// // Formats as "-00:00"
-    ///
-    /// // Pacific Standard Time (UTC-8)
-    /// let pst = RFC_3339.Offset.offset(seconds: -28800)
-    /// // Formats as "-08:00"
-    ///
-    /// // India Standard Time (UTC+5:30)
-    /// let ist = RFC_3339.Offset.offset(seconds: 19800)
-    /// // Formats as "+05:30"
+    /// // Serialize to string
+    /// let formatted = String(RFC_3339.Offset.utc)  // "Z"
     /// ```
-    ///
-    /// ## Valid Range
-    ///
-    /// RFC 3339 allows offsets from -23:59 to +23:59, though IANA timezone database
-    /// uses a more restricted range of approximately -12:00 to +14:00.
     ///
     /// ## See Also
     ///
     /// - ``DateTime``
-    /// - ``Formatter``
-    public enum Offset: Sendable, Equatable, Hashable {
+    public enum Offset: Sendable, Equatable, Hashable, Codable {
         /// UTC time with zero local offset
         ///
         /// Formats as "Z" in compact form or "+00:00" in numeric form.
@@ -63,25 +43,11 @@ extension RFC_3339 {
         /// Formats as "-00:00". Per RFC 3339 Section 4.3:
         /// "If the time in UTC is known, but the offset to local time is unknown,
         /// this can be represented with an offset of '-00:00'."
-        ///
-        /// This preserves the semantic information that UTC is known but local
-        /// context has been lost (e.g., from timezone-unaware storage).
         case unknownLocalOffset
 
         /// Numeric timezone offset in seconds
         ///
         /// - Parameter seconds: Offset from UTC in seconds, positive for east, negative for west
-        ///
-        /// Common offsets:
-        /// - Pacific: -28800 (-08:00)
-        /// - Mountain: -25200 (-07:00)
-        /// - Central: -21600 (-06:00)
-        /// - Eastern: -18000 (-05:00)
-        /// - UK: 0 (+00:00) - prefer `.utc` instead
-        /// - Central European: 3600 (+01:00)
-        /// - India: 19800 (+05:30)
-        /// - China: 28800 (+08:00)
-        /// - Japan: 32400 (+09:00)
         case offset(seconds: Int)
     }
 }
@@ -90,8 +56,6 @@ extension RFC_3339 {
 
 extension RFC_3339.Offset {
     /// Offset in seconds from UTC
-    ///
-    /// - Returns: Seconds offset (positive for east of UTC, negative for west)
     ///
     /// Both `.utc` and `.unknownLocalOffset` return 0, as they both represent UTC time.
     public var seconds: Int {
@@ -117,8 +81,14 @@ extension RFC_3339.Offset {
 extension RFC_3339.Offset {
     /// Error conditions for offset validation
     public enum Error: Swift.Error, Sendable, Equatable {
+        /// Input is empty
+        case empty
+
+        /// Invalid format
+        case invalidFormat(_ value: String)
+
         /// Offset seconds out of valid range (-86340 to +86340, i.e., -23:59 to +23:59)
-        case offsetOutOfRange(Int)
+        case offsetOutOfRange(_ seconds: Int)
     }
 
     /// Create offset from seconds with validation
@@ -128,13 +98,6 @@ extension RFC_3339.Offset {
     /// - Parameter seconds: Offset in seconds from UTC
     /// - Returns: Validated offset
     /// - Throws: ``Error/offsetOutOfRange(_:)`` if seconds is outside valid range
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// let offset = try RFC_3339.Offset(seconds: -28800)  // -08:00 PST
-    /// let invalid = try RFC_3339.Offset(seconds: 100000) // throws
-    /// ```
     public init(seconds: Int) throws {
         let maxOffset = 23 * 3600 + 59 * 60  // 23:59 = 86340 seconds
         guard seconds >= -maxOffset && seconds <= maxOffset else {
@@ -148,3 +111,152 @@ extension RFC_3339.Offset {
         }
     }
 }
+
+extension RFC_3339.Offset.Error: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .empty:
+            return "Offset cannot be empty"
+        case .invalidFormat(let value):
+            return "Invalid offset format: '\(value)'"
+        case .offsetOutOfRange(let seconds):
+            return "Offset \(seconds) seconds is out of range (±23:59)"
+        }
+    }
+}
+
+// MARK: - UInt8.ASCII.Serializable
+
+extension RFC_3339.Offset: UInt8.ASCII.Serializable {
+    public static func serialize<Buffer: RangeReplaceableCollection>(
+        ascii offset: Self,
+        into buffer: inout Buffer
+    ) where Buffer.Element == UInt8 {
+        switch offset {
+        case .utc:
+            buffer.append(UInt8.ascii.Z)
+
+        case .unknownLocalOffset:
+            buffer.append(contentsOf: "-00:00".utf8)
+
+        case .offset(let seconds):
+            let sign = seconds >= 0 ? UInt8.ascii.plus : UInt8.ascii.hyphen
+            let absSeconds = abs(seconds)
+            let hours = absSeconds / 3600
+            let minutes = (absSeconds % 3600) / 60
+
+            buffer.append(sign)
+            appendTwoDigits(&buffer, hours)
+            buffer.append(UInt8.ascii.colon)
+            appendTwoDigits(&buffer, minutes)
+        }
+    }
+
+    /// Parses an RFC 3339 offset from ASCII bytes
+    ///
+    /// ## Category Theory
+    ///
+    /// Parsing transformation:
+    /// - **Domain**: [UInt8] (ASCII bytes)
+    /// - **Codomain**: RFC_3339.Offset (structured data)
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let bytes = Array("+05:30".utf8)
+    /// let offset = try RFC_3339.Offset(ascii: bytes)
+    /// ```
+    ///
+    /// - Parameter bytes: ASCII byte representation
+    /// - Throws: `Error` if format is invalid
+    public init<Bytes: Collection>(ascii bytes: Bytes, in context: Void = ()) throws(Error)
+    where Bytes.Element == UInt8 {
+        guard !bytes.isEmpty else {
+            throw Error.empty
+        }
+
+        let arr = Array(bytes)
+
+        // Check for 'Z' or 'z' (UTC)
+        if arr.count == 1 && (arr[0] == UInt8.ascii.Z || arr[0] == UInt8.ascii.z) {
+            self = .utc
+            return
+        }
+
+        // Parse numeric offset: (+|-)HH:MM
+        guard arr.count >= 6 else {
+            throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
+        }
+
+        let sign: Int
+        if arr[0] == UInt8.ascii.plus {
+            sign = 1
+        } else if arr[0] == UInt8.ascii.hyphen {
+            sign = -1
+        } else {
+            throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
+        }
+
+        guard let h1 = Self.digitValue(arr[1]),
+              let h2 = Self.digitValue(arr[2]),
+              arr[3] == UInt8.ascii.colon,
+              let m1 = Self.digitValue(arr[4]),
+              let m2 = Self.digitValue(arr[5])
+        else {
+            throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
+        }
+
+        let hours = h1 * 10 + h2
+        let minutes = m1 * 10 + m2
+
+        guard hours <= 23 && minutes <= 59 else {
+            throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
+        }
+
+        let offsetSeconds = sign * (hours * 3600 + minutes * 60)
+
+        // Special cases for zero offset
+        if offsetSeconds == 0 {
+            if sign == -1 {
+                self = .unknownLocalOffset
+            } else {
+                self = .utc
+            }
+            return
+        }
+
+        let maxOffset = 23 * 3600 + 59 * 60
+        guard offsetSeconds >= -maxOffset && offsetSeconds <= maxOffset else {
+            throw Error.offsetOutOfRange(offsetSeconds)
+        }
+
+        self = .offset(seconds: offsetSeconds)
+    }
+
+    /// Convert ASCII digit byte to numeric value
+    private static func digitValue(_ byte: UInt8) -> Int? {
+        guard byte >= UInt8.ascii.`0` && byte <= UInt8.ascii.`9` else {
+            return nil
+        }
+        return Int(byte - UInt8.ascii.`0`)
+    }
+
+    /// Append 2-digit number with leading zero if needed
+    private static func appendTwoDigits<Buffer: RangeReplaceableCollection>(
+        _ buffer: inout Buffer,
+        _ value: Int
+    ) where Buffer.Element == UInt8 {
+        if value < 10 {
+            buffer.append(UInt8.ascii.`0`)
+        }
+        buffer.append(contentsOf: String(value).utf8)
+    }
+}
+
+// MARK: - RawRepresentable & CustomStringConvertible
+
+extension RFC_3339.Offset: UInt8.ASCII.RawRepresentable {
+    public typealias RawValue = String
+}
+
+extension RFC_3339.Offset: CustomStringConvertible {}

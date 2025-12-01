@@ -1,7 +1,5 @@
 // RFC_3339.Validation.swift
 // swift-rfc-3339
-//
-// RFC 3339 Section 5.7: Restrictions - Leap second validation
 
 extension RFC_3339 {
     /// RFC 3339 validation rules
@@ -20,7 +18,6 @@ extension RFC_3339 {
     ///
     /// ## See Also
     ///
-    /// - ``Parser``
     /// - ``DateTime``
     public enum Validation {}
 }
@@ -38,7 +35,7 @@ extension RFC_3339.Validation {
     /// - Parameters:
     ///   - month: Month value (1-12)
     ///   - day: Day value (1-31)
-    /// - Throws: ``RFC_3339.Parser.Error/invalidLeapSecond(month:day:)`` if not a valid leap second date
+    /// - Throws: ``RFC_3339.DateTime.Error/invalidLeapSecond(month:day:)`` if not a valid leap second date
     ///
     /// ## Usage
     ///
@@ -50,11 +47,11 @@ extension RFC_3339.Validation {
     /// // Invalid leap second date
     /// try RFC_3339.Validation.validateLeapSecond(month: 1, day: 1)   // throws
     /// ```
-    public static func validateLeapSecond(month: Int, day: Int) throws {
+    public static func validateLeapSecond(month: Int, day: Int) throws(RFC_3339.DateTime.Error) {
         let isValidLeapSecondDate = (month == 6 && day == 30) || (month == 12 && day == 31)
 
         guard isValidLeapSecondDate else {
-            throw RFC_3339.Parser.Error.invalidLeapSecond(month: month, day: day)
+            throw RFC_3339.DateTime.Error.invalidLeapSecond(month: month, day: day)
         }
     }
 }
