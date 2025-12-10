@@ -73,9 +73,9 @@ extension RFC_3339 {
 
 extension RFC_3339.DateTime: Hashable {}
 
-// MARK: - UInt8.ASCII.Serializable
+// MARK: - Binary.ASCII.Serializable
 
-extension RFC_3339.DateTime: UInt8.ASCII.Serializable {
+extension RFC_3339.DateTime: Binary.ASCII.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         ascii dateTime: Self,
         into buffer: inout Buffer
@@ -206,7 +206,7 @@ extension RFC_3339.DateTime: UInt8.ASCII.Serializable {
 
 // MARK: - RawRepresentable & CustomStringConvertible
 
-extension RFC_3339.DateTime: UInt8.ASCII.RawRepresentable {
+extension RFC_3339.DateTime: Binary.ASCII.RawRepresentable {
     public typealias RawValue = String
 }
 

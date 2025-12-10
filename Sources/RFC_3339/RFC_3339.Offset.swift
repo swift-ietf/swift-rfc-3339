@@ -125,9 +125,9 @@ extension RFC_3339.Offset.Error: CustomStringConvertible {
     }
 }
 
-// MARK: - UInt8.ASCII.Serializable
+// MARK: - Binary.ASCII.Serializable
 
-extension RFC_3339.Offset: UInt8.ASCII.Serializable {
+extension RFC_3339.Offset: Binary.ASCII.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         ascii offset: Self,
         into buffer: inout Buffer
@@ -255,7 +255,7 @@ extension RFC_3339.Offset: UInt8.ASCII.Serializable {
 
 // MARK: - RawRepresentable & CustomStringConvertible
 
-extension RFC_3339.Offset: UInt8.ASCII.RawRepresentable {
+extension RFC_3339.Offset: Binary.ASCII.RawRepresentable {
     public typealias RawValue = String
 }
 
