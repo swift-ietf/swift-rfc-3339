@@ -1,7 +1,7 @@
 // RFC_3339.Offset.swift
 // swift-rfc-3339
 
-public import INCITS_4_1986
+public import ASCII
 
 extension RFC_3339 {
     /// UTC offset for RFC 3339 timestamps
