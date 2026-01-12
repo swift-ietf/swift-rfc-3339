@@ -14,10 +14,10 @@ let package = Package(
         .library(name: "RFC 3339", targets: ["RFC 3339"])
     ],
     dependencies: [
-        .package(path: "../../swift-foundations/swift-ascii"),
-        .package(path: "../../swift-primitives/swift-standard-library-extensions"),
-        .package(path: "../../swift-primitives/swift-binary-primitives"),
-        .package(path: "../../swift-primitives/swift-time-primitives"),
+        .package(url: "https://github.com/swift-foundations/swift-ascii.git", from: "0.0.1"),
+        .package(url: "https://github.com/swift-primitives/swift-standard-library-extensions.git", from: "0.0.1"),
+        .package(url: "https://github.com/swift-primitives/swift-binary-primitives.git", from: "0.0.1"),
+        .package(url: "https://github.com/swift-primitives/swift-time-primitives.git", from: "0.0.1"),
     ],
     targets: [
         .target(
