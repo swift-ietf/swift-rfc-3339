@@ -17,7 +17,7 @@ let package = Package(
         .package(path: "../../swift-foundations/swift-ascii"),
         .package(path: "../../swift-primitives/swift-standard-library-extensions"),
         .package(path: "../../swift-primitives/swift-binary-primitives"),
-        .package(path: "../../swift-primitives/swift-time-primitives"),
+        .package(path: "../../swift-primitives/swift-time-primitives")
     ],
     targets: [
         .target(
@@ -26,12 +26,8 @@ let package = Package(
                 .product(name: "ASCII", package: "swift-ascii"),
                 .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
                 .product(name: "Binary Primitives", package: "swift-binary-primitives"),
-                .product(name: "Time Primitives", package: "swift-time-primitives"),
+                .product(name: "Time Primitives", package: "swift-time-primitives")
             ]
-        ),
-        .testTarget(
-            name: "RFC 3339".tests,
-            dependencies: ["RFC 3339"]
         )
     ],
     swiftLanguageModes: [.v6]
