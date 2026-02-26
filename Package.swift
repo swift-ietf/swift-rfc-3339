@@ -28,7 +28,13 @@ let package = Package(
                 .product(name: "Binary Primitives", package: "swift-binary-primitives"),
                 .product(name: "Time Primitives", package: "swift-time-primitives")
             ]
-        )
+        ),
+        .testTarget(
+            name: "RFC 3339 Tests",
+            dependencies: [
+                "RFC 3339",
+            ]
+        ),
     ],
     swiftLanguageModes: [.v6]
 )
@@ -43,6 +49,7 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
         .enableExperimentalFeature("Lifetimes"),
         .enableExperimentalFeature("SuppressedAssociatedTypes"),
         .enableExperimentalFeature("SuppressedAssociatedTypesWithDefaults"),
