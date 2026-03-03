@@ -98,7 +98,7 @@ extension RFC_3339.Offset {
     /// - Parameter seconds: Offset in seconds from UTC
     /// - Returns: Validated offset
     /// - Throws: ``Error/offsetOutOfRange(_:)`` if seconds is outside valid range
-    public init(seconds: Int) throws {
+    public init(seconds: Int) throws(Error) {
         let maxOffset = 23 * 3600 + 59 * 60  // 23:59 = 86340 seconds
         guard seconds >= -maxOffset && seconds <= maxOffset else {
             throw Error.offsetOutOfRange(seconds)

@@ -65,7 +65,7 @@ extension RFC_3339.StringWrapper {
     ///
     /// let dt3 = try "1990-12-31T23:59:60Z".rfc3339.parse()  // leap second
     /// ```
-    public func parse() throws -> RFC_3339.DateTime {
+    public func parse() throws(RFC_3339.DateTime.Error) -> RFC_3339.DateTime {
         try RFC_3339.DateTime(value)
     }
 
