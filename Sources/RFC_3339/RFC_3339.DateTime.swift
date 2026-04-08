@@ -1,7 +1,7 @@
 // RFC_3339.DateTime.swift
 // swift-rfc-3339
 
-public import ASCII
+public import ASCII_Serializer_Primitives
 
 extension RFC_3339 {
     /// RFC 3339 date-time value
