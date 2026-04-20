@@ -11,8 +11,8 @@ import Testing
 
 @Suite("RFC_3339.DateTime - UTC Timestamps")
 struct ParserUTCTests {
-    @Test("Parse simple UTC timestamp")
-    func parseSimpleUTC() throws {
+    @Test
+    func `Parse simple UTC timestamp`() throws {
         let input = "2024-11-22T14:30:00Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -25,8 +25,8 @@ struct ParserUTCTests {
         #expect(dt.offset == .utc)
     }
 
-    @Test("Parse lowercase 'z' offset")
-    func parseLowercaseZ() throws {
+    @Test
+    func `Parse lowercase 'z' offset`() throws {
         let input = "2024-11-22T14:30:00z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -34,8 +34,8 @@ struct ParserUTCTests {
         #expect(dt.offset == .utc)
     }
 
-    @Test("Parse +00:00 as UTC")
-    func parsePlusZeroZero() throws {
+    @Test
+    func `Parse +00:00 as UTC`() throws {
         let input = "2024-11-22T14:30:00+00:00"
         let dt = try RFC_3339.DateTime(input)
 
@@ -43,8 +43,8 @@ struct ParserUTCTests {
         #expect(dt.offset.seconds == 0)
     }
 
-    @Test("Z and +00:00 are semantically identical")
-    func zAndPlusZeroZeroIdentical() throws {
+    @Test
+    func `Z and +00:00 are semantically identical`() throws {
         let withZ = try RFC_3339.DateTime("2024-11-22T14:30:00Z")
         let withPlus = try RFC_3339.DateTime("2024-11-22T14:30:00+00:00")
 
@@ -56,8 +56,8 @@ struct ParserUTCTests {
 
 @Suite("RFC_3339.DateTime - Numeric Offsets")
 struct ParserNumericOffsetTests {
-    @Test("Parse timestamp with positive offset")
-    func parsePositiveOffset() throws {
+    @Test
+    func `Parse timestamp with positive offset`() throws {
         let input = "2024-11-22T14:30:00+05:30"
         let dt = try RFC_3339.DateTime(input)
 
@@ -65,8 +65,8 @@ struct ParserNumericOffsetTests {
         #expect(dt.offset == .offset(seconds: 19800))  // 5.5 hours
     }
 
-    @Test("Parse timestamp with negative offset")
-    func parseNegativeOffset() throws {
+    @Test
+    func `Parse timestamp with negative offset`() throws {
         let input = "2024-11-22T14:30:00-08:00"
         let dt = try RFC_3339.DateTime(input)
 
@@ -74,8 +74,8 @@ struct ParserNumericOffsetTests {
         #expect(dt.offset == .offset(seconds: -28800))  // -8 hours
     }
 
-    @Test("Parse unknown local offset")
-    func parseUnknownLocalOffset() throws {
+    @Test
+    func `Parse unknown local offset`() throws {
         let input = "2024-11-22T14:30:00-00:00"
         let dt = try RFC_3339.DateTime(input)
 
@@ -85,8 +85,8 @@ struct ParserNumericOffsetTests {
 
 @Suite("RFC_3339.DateTime - Fractional Seconds")
 struct ParserFractionalSecondsTests {
-    @Test("Parse timestamp with fractional seconds")
-    func parseFractionalSeconds() throws {
+    @Test
+    func `Parse timestamp with fractional seconds`() throws {
         let input = "1985-04-12T23:20:50.52Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -95,8 +95,8 @@ struct ParserFractionalSecondsTests {
         #expect(dt.offset == .utc)
     }
 
-    @Test("Parse various fractional second precisions")
-    func parseVariousPrecisions() throws {
+    @Test
+    func `Parse various fractional second precisions`() throws {
         let inputs = [
             ("2024-01-01T00:00:00.1Z", 100),  // 1 digit
             ("2024-01-01T00:00:00.12Z", 120),  // 2 digits
@@ -114,8 +114,8 @@ struct ParserFractionalSecondsTests {
 
 @Suite("RFC_3339.DateTime - Leap Seconds")
 struct ParserLeapSecondTests {
-    @Test("Parse leap second")
-    func parseLeapSecond() throws {
+    @Test
+    func `Parse leap second`() throws {
         let input = "1990-12-31T23:59:60Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -124,8 +124,8 @@ struct ParserLeapSecondTests {
         #expect(dt.time.day == 31)
     }
 
-    @Test("Leap second on June 30")
-    func leapSecondJune() throws {
+    @Test
+    func `Leap second on June 30`() throws {
         let input = "2015-06-30T23:59:60Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -137,8 +137,8 @@ struct ParserLeapSecondTests {
 
 @Suite("RFC_3339.DateTime - Case Insensitivity")
 struct ParserCaseInsensitivityTests {
-    @Test("Parse lowercase 't' separator")
-    func parseLowercaseT() throws {
+    @Test
+    func `Parse lowercase 't' separator`() throws {
         let input = "2024-11-22t14:30:00Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -147,8 +147,8 @@ struct ParserCaseInsensitivityTests {
         #expect(dt.offset == .utc)
     }
 
-    @Test("Parse lowercase 't' and 'z'")
-    func parseLowercaseTAndZ() throws {
+    @Test
+    func `Parse lowercase 't' and 'z'`() throws {
         let input = "2024-11-22t14:30:00z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -159,8 +159,8 @@ struct ParserCaseInsensitivityTests {
 
 @Suite("RFC_3339.DateTime - StringProtocol Support")
 struct ParserStringProtocolTests {
-    @Test("Parse substring")
-    func parseSubstring() throws {
+    @Test
+    func `Parse substring`() throws {
         let full = "timestamp: 2024-11-22T14:30:00Z end"
         let substring = full.dropFirst(11).dropLast(4)  // Extract just the timestamp
 

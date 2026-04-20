@@ -11,44 +11,44 @@ import Testing
 
 @Suite("RFC_3339.Offset - Creation and Validation")
 struct OffsetCreationTests {
-    @Test("Create offset from valid seconds")
-    func createValidOffset() throws {
+    @Test
+    func `Create offset from valid seconds`() throws {
         let offset = try RFC_3339.Offset(seconds: -28800)
         #expect(offset == .offset(seconds: -28800))
         #expect(offset.seconds == -28800)
     }
 
-    @Test("Create offset from zero seconds becomes UTC")
-    func createZeroBecomesUTC() throws {
+    @Test
+    func `Create offset from zero seconds becomes UTC`() throws {
         let offset = try RFC_3339.Offset(seconds: 0)
         #expect(offset == .utc)
         #expect(offset.seconds == 0)
     }
 
-    @Test("Maximum valid offset")
-    func maxValidOffset() throws {
+    @Test
+    func `Maximum valid offset`() throws {
         let maxSeconds = 23 * 3600 + 59 * 60  // 23:59
         let offset = try RFC_3339.Offset(seconds: maxSeconds)
         #expect(offset == .offset(seconds: 86340))
     }
 
-    @Test("Minimum valid offset")
-    func minValidOffset() throws {
+    @Test
+    func `Minimum valid offset`() throws {
         let minSeconds = -(23 * 3600 + 59 * 60)  // -23:59
         let offset = try RFC_3339.Offset(seconds: minSeconds)
         #expect(offset == .offset(seconds: -86340))
     }
 
-    @Test("Offset beyond maximum throws error")
-    func offsetTooLarge() {
+    @Test
+    func `Offset beyond maximum throws error`() {
         let tooLarge = 24 * 3600  // 24:00
         #expect(throws: RFC_3339.Offset.Error.self) {
             _ = try RFC_3339.Offset(seconds: tooLarge)
         }
     }
 
-    @Test("Offset beyond minimum throws error")
-    func offsetTooSmall() {
+    @Test
+    func `Offset beyond minimum throws error`() {
         let tooSmall = -(24 * 3600)  // -24:00
         #expect(throws: RFC_3339.Offset.Error.self) {
             _ = try RFC_3339.Offset(seconds: tooSmall)
@@ -60,22 +60,22 @@ struct OffsetCreationTests {
 
 @Suite("RFC_3339.Offset - Semantic Distinctions")
 struct OffsetSemanticsTests {
-    @Test("UTC has zero seconds")
-    func utcHasZeroSeconds() {
+    @Test
+    func `UTC has zero seconds`() {
         let offset = RFC_3339.Offset.utc
         #expect(offset.seconds == 0)
         #expect(offset.isUTC)
     }
 
-    @Test("Unknown local offset has zero seconds")
-    func unknownLocalOffsetHasZeroSeconds() {
+    @Test
+    func `Unknown local offset has zero seconds`() {
         let offset = RFC_3339.Offset.unknownLocalOffset
         #expect(offset.seconds == 0)
         #expect(offset.isUTC)
     }
 
-    @Test("UTC and unknown local offset are different")
-    func utcAndUnknownAreDifferent() {
+    @Test
+    func `UTC and unknown local offset are different`() {
         let utc = RFC_3339.Offset.utc
         let unknown = RFC_3339.Offset.unknownLocalOffset
 
@@ -84,8 +84,8 @@ struct OffsetSemanticsTests {
         #expect(utc.isUTC && unknown.isUTC)  // Both are UTC
     }
 
-    @Test("Numeric offset with zero seconds becomes UTC via init")
-    func numericZeroBecomesUTC() throws {
+    @Test
+    func `Numeric offset with zero seconds becomes UTC via init`() throws {
         let offset = try RFC_3339.Offset(seconds: 0)
         #expect(offset == .utc)
         #expect(offset != .unknownLocalOffset)
@@ -96,25 +96,25 @@ struct OffsetSemanticsTests {
 
 @Suite("RFC_3339.Offset - Equality")
 struct OffsetEqualityTests {
-    @Test("UTC equals itself")
-    func utcEqualsItself() {
+    @Test
+    func `UTC equals itself`() {
         #expect(RFC_3339.Offset.utc == .utc)
     }
 
-    @Test("Unknown local offset equals itself")
-    func unknownEqualsItself() {
+    @Test
+    func `Unknown local offset equals itself`() {
         #expect(RFC_3339.Offset.unknownLocalOffset == .unknownLocalOffset)
     }
 
-    @Test("Same numeric offsets are equal")
-    func sameNumericOffsetsEqual() {
+    @Test
+    func `Same numeric offsets are equal`() {
         let offset1 = RFC_3339.Offset.offset(seconds: -28800)
         let offset2 = RFC_3339.Offset.offset(seconds: -28800)
         #expect(offset1 == offset2)
     }
 
-    @Test("Different numeric offsets are not equal")
-    func differentNumericOffsetsNotEqual() {
+    @Test
+    func `Different numeric offsets are not equal`() {
         let offset1 = RFC_3339.Offset.offset(seconds: -28800)
         let offset2 = RFC_3339.Offset.offset(seconds: 19800)
         #expect(offset1 != offset2)
@@ -125,24 +125,24 @@ struct OffsetEqualityTests {
 
 @Suite("RFC_3339.Offset - Properties")
 struct OffsetPropertiesTests {
-    @Test("isUTC true for UTC")
-    func isUTCForUTC() {
+    @Test
+    func `isUTC true for UTC`() {
         #expect(RFC_3339.Offset.utc.isUTC)
     }
 
-    @Test("isUTC true for unknown local offset")
-    func isUTCForUnknownLocalOffset() {
+    @Test
+    func `isUTC true for unknown local offset`() {
         #expect(RFC_3339.Offset.unknownLocalOffset.isUTC)
     }
 
-    @Test("isUTC false for non-zero offsets")
-    func isUTCFalseForNonZero() {
+    @Test
+    func `isUTC false for non-zero offsets`() {
         let offset = RFC_3339.Offset.offset(seconds: -28800)
         #expect(!offset.isUTC)
     }
 
-    @Test("Seconds property for various offsets")
-    func secondsPropertyForVariousOffsets() {
+    @Test
+    func `Seconds property for various offsets`() {
         #expect(RFC_3339.Offset.utc.seconds == 0)
         #expect(RFC_3339.Offset.unknownLocalOffset.seconds == 0)
         #expect(RFC_3339.Offset.offset(seconds: 3600).seconds == 3600)
@@ -154,8 +154,8 @@ struct OffsetPropertiesTests {
 
 @Suite("RFC_3339.Offset - Common Timezones")
 struct CommonTimezoneTests {
-    @Test("Common timezone offsets")
-    func commonTimezones() throws {
+    @Test
+    func `Common timezone offsets`() throws {
         let timezones: [(name: String, seconds: Int)] = [
             ("UTC-12", -43200),
             ("PST (UTC-8)", -28800),

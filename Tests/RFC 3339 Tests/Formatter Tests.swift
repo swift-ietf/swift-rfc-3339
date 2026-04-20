@@ -11,8 +11,8 @@ import Testing
 
 @Suite("RFC_3339.DateTime - UTC Formatting")
 struct FormatterUTCTests {
-    @Test("Format simple UTC timestamp")
-    func formatSimpleUTC() throws {
+    @Test
+    func `Format simple UTC timestamp`() throws {
         let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
         let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
         let formatted = String(dateTime)
@@ -20,8 +20,8 @@ struct FormatterUTCTests {
         #expect(formatted == "2024-11-22T14:30:00Z")
     }
 
-    @Test("Format UTC uses 'Z' not '+00:00'")
-    func formatUTCUsesZ() throws {
+    @Test
+    func `Format UTC uses 'Z' not '+00:00'`() throws {
         let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
         let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
         let formatted = String(dateTime)
@@ -33,8 +33,8 @@ struct FormatterUTCTests {
 
 @Suite("RFC_3339.DateTime - Numeric Offsets")
 struct FormatterNumericOffsetTests {
-    @Test("Format with positive offset")
-    func formatWithPositiveOffset() throws {
+    @Test
+    func `Format with positive offset`() throws {
         let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
         let dateTime = RFC_3339.DateTime(time: time, offset: .offset(seconds: 19800))
         let formatted = String(dateTime)
@@ -42,8 +42,8 @@ struct FormatterNumericOffsetTests {
         #expect(formatted == "2024-11-22T14:30:00+05:30")
     }
 
-    @Test("Format with negative offset")
-    func formatWithNegativeOffset() throws {
+    @Test
+    func `Format with negative offset`() throws {
         let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
         let dateTime = RFC_3339.DateTime(time: time, offset: .offset(seconds: -28800))
         let formatted = String(dateTime)
@@ -51,8 +51,8 @@ struct FormatterNumericOffsetTests {
         #expect(formatted == "2024-11-22T14:30:00-08:00")
     }
 
-    @Test("Format unknown local offset")
-    func formatUnknownLocalOffset() throws {
+    @Test
+    func `Format unknown local offset`() throws {
         let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
         let dateTime = RFC_3339.DateTime(time: time, offset: .unknownLocalOffset)
         let formatted = String(dateTime)
@@ -60,8 +60,8 @@ struct FormatterNumericOffsetTests {
         #expect(formatted == "2024-11-22T14:30:00-00:00")
     }
 
-    @Test("Format various timezone offsets")
-    func formatVariousOffsets() throws {
+    @Test
+    func `Format various timezone offsets`() throws {
         let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0)
 
         let testCases: [(seconds: Int, expected: String)] = [
@@ -84,8 +84,8 @@ struct FormatterNumericOffsetTests {
 
 @Suite("RFC_3339.DateTime - Fractional Seconds")
 struct FormatterFractionalSecondsTests {
-    @Test("Format with millisecond precision")
-    func formatWithPrecision() throws {
+    @Test
+    func `Format with millisecond precision`() throws {
         let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
         let dateTime = RFC_3339.DateTime(time: time, offset: .utc, precision: 3)
         let formatted = String(dateTime)
@@ -93,8 +93,8 @@ struct FormatterFractionalSecondsTests {
         #expect(formatted == "2024-11-22T14:30:00.000Z")
     }
 
-    @Test("Format with various precisions")
-    func formatVariousPrecisions() throws {
+    @Test
+    func `Format with various precisions`() throws {
         let time = try Time(
             year: 2024,
             month: 1,
@@ -123,8 +123,8 @@ struct FormatterFractionalSecondsTests {
         }
     }
 
-    @Test("Format without precision omits zero fractional seconds")
-    func formatOmitsZeroFraction() throws {
+    @Test
+    func `Format without precision omits zero fractional seconds`() throws {
         let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0)
         let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
         let formatted = String(dateTime)
@@ -133,8 +133,8 @@ struct FormatterFractionalSecondsTests {
         #expect(!formatted.contains("."))
     }
 
-    @Test("Format without precision includes non-zero fractional seconds")
-    func formatIncludesNonZeroFraction() throws {
+    @Test
+    func `Format without precision includes non-zero fractional seconds`() throws {
         let time = try Time(
             year: 2024,
             month: 1,
@@ -153,8 +153,8 @@ struct FormatterFractionalSecondsTests {
 
 @Suite("RFC_3339.DateTime - DateTime Formatting")
 struct FormatterDateTimeTests {
-    @Test("Format DateTime directly")
-    func formatDateTime() throws {
+    @Test
+    func `Format DateTime directly`() throws {
         let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
         let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
         let formatted = String(dateTime)
@@ -162,8 +162,8 @@ struct FormatterDateTimeTests {
         #expect(formatted == "2024-11-22T14:30:00Z")
     }
 
-    @Test("Format DateTime with precision")
-    func formatDateTimeWithPrecision() throws {
+    @Test
+    func `Format DateTime with precision`() throws {
         let time = try Time(
             year: 2024,
             month: 11,

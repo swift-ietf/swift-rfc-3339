@@ -12,8 +12,8 @@ import Testing
 
 @Suite("RFC 3339 - Year Boundaries")
 struct YearBoundaryTests {
-    @Test("Parse year 0000 (minimum allowed)")
-    func parseYear0000() throws {
+    @Test
+    func `Parse year 0000 (minimum allowed)`() throws {
         let input = "0000-01-01T00:00:00Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -22,8 +22,8 @@ struct YearBoundaryTests {
         #expect(dt.time.day == 1)
     }
 
-    @Test("Parse year 9999 (maximum allowed)")
-    func parseYear9999() throws {
+    @Test
+    func `Parse year 9999 (maximum allowed)`() throws {
         let input = "9999-12-31T23:59:59Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -32,8 +32,8 @@ struct YearBoundaryTests {
         #expect(dt.time.day == 31)
     }
 
-    @Test("Format year 0000")
-    func formatYear0000() throws {
+    @Test
+    func `Format year 0000`() throws {
         let time = try Time(year: 0, month: 1, day: 1, hour: 0, minute: 0, second: 0)
         let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
         let formatted = String(dateTime)
@@ -41,8 +41,8 @@ struct YearBoundaryTests {
         #expect(formatted == "0000-01-01T00:00:00Z")
     }
 
-    @Test("Format year 9999")
-    func formatYear9999() throws {
+    @Test
+    func `Format year 9999`() throws {
         let time = try Time(year: 9999, month: 12, day: 31, hour: 23, minute: 59, second: 59)
         let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
         let formatted = String(dateTime)
@@ -55,8 +55,8 @@ struct YearBoundaryTests {
 
 @Suite("RFC 3339 - Leap Seconds")
 struct LeapSecondTests {
-    @Test("Leap second on December 31")
-    func leapSecondDecember() throws {
+    @Test
+    func `Leap second on December 31`() throws {
         let input = "1990-12-31T23:59:60Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -65,8 +65,8 @@ struct LeapSecondTests {
         #expect(dt.time.day == 31)
     }
 
-    @Test("Leap second on June 30")
-    func leapSecondJune() throws {
+    @Test
+    func `Leap second on June 30`() throws {
         let input = "2015-06-30T23:59:60Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -75,8 +75,8 @@ struct LeapSecondTests {
         #expect(dt.time.day == 30)
     }
 
-    @Test("Negative leap second (second=58)")
-    func negativeLeapSecond() throws {
+    @Test
+    func `Negative leap second (second=58)`() throws {
         // While RFC 3339 grammar allows second=58 for negative leap seconds,
         // they have never occurred in practice. Our implementation allows them
         // but doesn't special-case validate them like positive leap seconds.
@@ -87,8 +87,8 @@ struct LeapSecondTests {
         // Should parse successfully - second=58 is valid per grammar
     }
 
-    @Test("Format leap second")
-    func formatLeapSecond() throws {
+    @Test
+    func `Format leap second`() throws {
         let time = try Time(year: 2015, month: 6, day: 30, hour: 23, minute: 59, second: 60)
         let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
         let formatted = String(dateTime)
@@ -101,24 +101,24 @@ struct LeapSecondTests {
 
 @Suite("RFC 3339 - Offset Boundaries")
 struct OffsetBoundaryTests {
-    @Test("Maximum positive offset (+23:59)")
-    func maxPositiveOffset() throws {
+    @Test
+    func `Maximum positive offset (+23:59)`() throws {
         let input = "2024-01-01T00:00:00+23:59"
         let dt = try RFC_3339.DateTime(input)
 
         #expect(dt.offset == .offset(seconds: 86340))  // 23*3600 + 59*60
     }
 
-    @Test("Maximum negative offset (-23:59)")
-    func maxNegativeOffset() throws {
+    @Test
+    func `Maximum negative offset (-23:59)`() throws {
         let input = "2024-01-01T00:00:00-23:59"
         let dt = try RFC_3339.DateTime(input)
 
         #expect(dt.offset == .offset(seconds: -86340))
     }
 
-    @Test("Format maximum positive offset")
-    func formatMaxPositiveOffset() throws {
+    @Test
+    func `Format maximum positive offset`() throws {
         let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0)
         let dateTime = RFC_3339.DateTime(time: time, offset: .offset(seconds: 86340))
         let formatted = String(dateTime)
@@ -126,8 +126,8 @@ struct OffsetBoundaryTests {
         #expect(formatted == "2024-01-01T00:00:00+23:59")
     }
 
-    @Test("Format maximum negative offset")
-    func formatMaxNegativeOffset() throws {
+    @Test
+    func `Format maximum negative offset`() throws {
         let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0)
         let dateTime = RFC_3339.DateTime(time: time, offset: .offset(seconds: -86340))
         let formatted = String(dateTime)
@@ -135,8 +135,8 @@ struct OffsetBoundaryTests {
         #expect(formatted == "2024-01-01T00:00:00-23:59")
     }
 
-    @Test("Zero offset edge cases")
-    func zeroOffsetVariations() throws {
+    @Test
+    func `Zero offset edge cases`() throws {
         // All three zero offset representations
         let z = try RFC_3339.DateTime("2024-01-01T00:00:00Z")
         let plus = try RFC_3339.DateTime("2024-01-01T00:00:00+00:00")
@@ -162,16 +162,16 @@ struct OffsetBoundaryTests {
 
 @Suite("RFC 3339 - Fractional Second Boundaries")
 struct FractionalSecondEdgeCaseTests {
-    @Test("Single digit fractional second")
-    func singleDigitFraction() throws {
+    @Test
+    func `Single digit fractional second`() throws {
         let input = "2024-01-01T00:00:00.1Z"
         let dt = try RFC_3339.DateTime(input)
 
         #expect(dt.time.millisecond.value == 100)
     }
 
-    @Test("Maximum precision (9 digits)")
-    func maxPrecisionFraction() throws {
+    @Test
+    func `Maximum precision (9 digits)`() throws {
         let input = "2024-01-01T00:00:00.123456789Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -180,8 +180,8 @@ struct FractionalSecondEdgeCaseTests {
         #expect(dt.time.nanosecond.value == 789)
     }
 
-    @Test("More than 9 digits truncates")
-    func exceedMaxPrecision() throws {
+    @Test
+    func `More than 9 digits truncates`() throws {
         let input = "2024-01-01T00:00:00.1234567890123Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -191,8 +191,8 @@ struct FractionalSecondEdgeCaseTests {
         #expect(dt.time.nanosecond.value == 789)
     }
 
-    @Test("Format precision 0 omits decimal point")
-    func formatPrecisionZero() throws {
+    @Test
+    func `Format precision 0 omits decimal point`() throws {
         let time = try Time(
             year: 2024,
             month: 1,
@@ -209,8 +209,8 @@ struct FractionalSecondEdgeCaseTests {
         #expect(!formatted.contains("."))
     }
 
-    @Test("Format precision 9 (nanoseconds)")
-    func formatPrecisionNine() throws {
+    @Test
+    func `Format precision 9 (nanoseconds)`() throws {
         let time = try Time(
             year: 2024,
             month: 1,
@@ -233,8 +233,8 @@ struct FractionalSecondEdgeCaseTests {
 
 @Suite("RFC 3339 - Component Boundaries")
 struct ComponentBoundaryTests {
-    @Test("Midnight (start of day)")
-    func midnight() throws {
+    @Test
+    func `Midnight (start of day)`() throws {
         let input = "2024-01-01T00:00:00Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -243,8 +243,8 @@ struct ComponentBoundaryTests {
         #expect(dt.time.second.value == 0)
     }
 
-    @Test("End of day (just before midnight)")
-    func endOfDay() throws {
+    @Test
+    func `End of day (just before midnight)`() throws {
         let input = "2024-01-01T23:59:59Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -253,8 +253,8 @@ struct ComponentBoundaryTests {
         #expect(dt.time.second.value == 59)
     }
 
-    @Test("First day of year")
-    func firstDayOfYear() throws {
+    @Test
+    func `First day of year`() throws {
         let input = "2024-01-01T00:00:00Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -262,8 +262,8 @@ struct ComponentBoundaryTests {
         #expect(dt.time.day == 1)
     }
 
-    @Test("Last day of year")
-    func lastDayOfYear() throws {
+    @Test
+    func `Last day of year`() throws {
         let input = "2024-12-31T23:59:59Z"
         let dt = try RFC_3339.DateTime(input)
 
@@ -271,8 +271,8 @@ struct ComponentBoundaryTests {
         #expect(dt.time.day == 31)
     }
 
-    @Test("Leap year February 29")
-    func leapYearFeb29() throws {
+    @Test
+    func `Leap year February 29`() throws {
         let input = "2024-02-29T12:00:00Z"
         let dt = try RFC_3339.DateTime(input)
 

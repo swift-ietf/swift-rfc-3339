@@ -10,8 +10,8 @@ import Testing
 
 @Suite("RFC 3339 - Round-trip Conversions")
 struct RoundTripTests {
-    @Test("Round-trip: parse then format")
-    func roundTrip() throws {
+    @Test
+    func `Round-trip: parse then format`() throws {
         let original = "1985-04-12T23:20:50.52Z"
         let dt = try RFC_3339.DateTime(original)
         let formatted = String(dt)
@@ -57,8 +57,8 @@ struct RoundTripTests {
         #expect(dt.offset == dt2.offset)
     }
 
-    @Test("Round-trip with different case")
-    func roundTripDifferentCase() throws {
+    @Test
+    func `Round-trip with different case`() throws {
         // Input has lowercase, output will have uppercase
         let input = "2024-11-22t14:30:00z"
         let dt = try RFC_3339.DateTime(input)
@@ -73,8 +73,8 @@ struct RoundTripTests {
         #expect(dt.offset == dt2.offset)
     }
 
-    @Test("Round-trip +00:00 normalizes to Z")
-    func roundTripPlusZeroZero() throws {
+    @Test
+    func `Round-trip +00:00 normalizes to Z`() throws {
         let input = "2024-11-22T14:30:00+00:00"
         let dt = try RFC_3339.DateTime(input)
 
@@ -89,8 +89,8 @@ struct RoundTripTests {
         #expect(dt.offset == dt2.offset)
     }
 
-    @Test("Round-trip preserves unknown local offset")
-    func roundTripUnknownLocalOffset() throws {
+    @Test
+    func `Round-trip preserves unknown local offset`() throws {
         let input = "2024-11-22T14:30:00-00:00"
         let dt = try RFC_3339.DateTime(input)
 
@@ -106,8 +106,8 @@ struct RoundTripTests {
         #expect(dt2.offset == .unknownLocalOffset)
     }
 
-    @Test("Round-trip with fractional seconds")
-    func roundTripFractionalSeconds() throws {
+    @Test
+    func `Round-trip with fractional seconds`() throws {
         let testCases = [
             "2024-01-01T00:00:00.1Z",
             "2024-01-01T00:00:00.12Z",
@@ -127,8 +127,8 @@ struct RoundTripTests {
         }
     }
 
-    @Test("Round-trip format with explicit precision")
-    func roundTripWithExplicitPrecision() throws {
+    @Test
+    func `Round-trip format with explicit precision`() throws {
         let time = try Time(
             year: 2024,
             month: 1,
