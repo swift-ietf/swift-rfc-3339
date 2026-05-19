@@ -131,23 +131,23 @@ extension RFC_3339.Offset: Binary.ASCII.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         ascii offset: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         switch offset {
         case .utc:
-            buffer.append(UInt8.ascii.Z)
+            buffer.append(ASCII.Code.Z)
 
         case .unknownLocalOffset:
             buffer.append(contentsOf: "-00:00".utf8)
 
         case .offset(let seconds):
-            let sign = seconds >= 0 ? UInt8.ascii.plus : UInt8.ascii.hyphen
+            let sign: ASCII.Code = seconds >= 0 ? .plus : .hyphen
             let absSeconds = abs(seconds)
             let hours = absSeconds / 3600
             let minutes = (absSeconds % 3600) / 60
 
             buffer.append(sign)
             appendTwoDigits(&buffer, hours)
-            buffer.append(UInt8.ascii.colon)
+            buffer.append(ASCII.Code.colon)
             appendTwoDigits(&buffer, minutes)
         }
     }
@@ -157,28 +157,31 @@ extension RFC_3339.Offset: Binary.ASCII.Serializable {
     /// ## Category Theory
     ///
     /// Parsing transformation:
-    /// - **Domain**: [UInt8] (ASCII bytes)
+    /// - **Domain**: [Byte] (ASCII bytes)
     /// - **Codomain**: RFC_3339.Offset (structured data)
     ///
     /// ## Example
     ///
     /// ```swift
-    /// let bytes = Array("+05:30".utf8)
+    /// let bytes = Array<Byte>("+05:30".utf8)
     /// let offset = try RFC_3339.Offset(ascii: bytes)
     /// ```
     ///
     /// - Parameter bytes: ASCII byte representation
     /// - Throws: `Error` if format is invalid
     public init<Bytes: Collection>(ascii bytes: Bytes, in context: Void = ()) throws(Error)
-    where Bytes.Element == UInt8 {
+    where Bytes.Element == Byte {
         guard !bytes.isEmpty else {
             throw Error.empty
         }
 
-        let arr = Array(bytes)
+        // Type-up: lift to ASCII.Code at the entry boundary so the body works
+        // against ASCII.Code constants directly (RFC 3339 grammar is strict ASCII;
+        // non-ASCII bytes are fail-state).
+        let arr = Array<ASCII.Code>(bytes)
 
         // Check for 'Z' or 'z' (UTC)
-        if arr.count == 1 && (arr[0] == UInt8.ascii.Z || arr[0] == UInt8.ascii.z) {
+        if arr.count == 1 && (arr[0] == ASCII.Code.Z || arr[0] == ASCII.Code.z) {
             self = .utc
             return
         }
@@ -189,9 +192,9 @@ extension RFC_3339.Offset: Binary.ASCII.Serializable {
         }
 
         let sign: Int
-        if arr[0] == UInt8.ascii.plus {
+        if arr[0] == ASCII.Code.plus {
             sign = 1
-        } else if arr[0] == UInt8.ascii.hyphen {
+        } else if arr[0] == ASCII.Code.hyphen {
             sign = -1
         } else {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
@@ -199,7 +202,7 @@ extension RFC_3339.Offset: Binary.ASCII.Serializable {
 
         guard let h1 = Self.digitValue(arr[1]),
             let h2 = Self.digitValue(arr[2]),
-            arr[3] == UInt8.ascii.colon,
+            arr[3] == ASCII.Code.colon,
             let m1 = Self.digitValue(arr[4]),
             let m2 = Self.digitValue(arr[5])
         else {
@@ -233,21 +236,22 @@ extension RFC_3339.Offset: Binary.ASCII.Serializable {
         self = .offset(seconds: offsetSeconds)
     }
 
-    /// Convert ASCII digit byte to numeric value
-    private static func digitValue(_ byte: UInt8) -> Int? {
-        guard byte >= UInt8.ascii.`0` && byte <= UInt8.ascii.`9` else {
+    /// Convert ASCII digit code to numeric value
+    private static func digitValue(_ code: ASCII.Code) -> Int? {
+        guard code >= ASCII.Code.`0` && code <= ASCII.Code.`9` else {
             return nil
         }
-        return Int(byte - UInt8.ascii.`0`)
+        // audit: underlying — pending byte-arithmetic decision
+        return Int(code.underlying - ASCII.Code.`0`.underlying)
     }
 
     /// Append 2-digit number with leading zero if needed
     private static func appendTwoDigits<Buffer: RangeReplaceableCollection>(
         _ buffer: inout Buffer,
         _ value: Int
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         if value < 10 {
-            buffer.append(UInt8.ascii.`0`)
+            buffer.append(ASCII.Code.`0`)
         }
         buffer.append(contentsOf: String(value).utf8)
     }
