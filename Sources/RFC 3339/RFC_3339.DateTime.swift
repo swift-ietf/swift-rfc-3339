@@ -429,10 +429,9 @@ extension RFC_3339.DateTime {
 
         // Parse all digits
         while index < codes.count, let digit = digitValue(codes[index]) {
-            // audit: underlying — UnicodeScalar(UInt32) stdlib-interop boundary; pending BSLI integration
-            fractionString.append(
-                Character(UnicodeScalar(UInt32(ASCII.Code.`0`.underlying) + UInt32(digit))!)
-            )
+            // audit: underlying — pending byte-arithmetic decision
+            let digitCode = ASCII.Code(ASCII.Code.`0`.underlying &+ UInt8(digit))
+            fractionString.append(Character(digitCode))
             index += 1
         }
 
@@ -546,8 +545,7 @@ extension RFC_3339.DateTime {
         code expected: ASCII.Code
     ) throws(Error) {
         guard index < codes.count && codes[index] == expected else {
-            // audit: underlying — UnicodeScalar(UInt8) stdlib-interop boundary; pending BSLI integration
-            throw Error.invalidFormat("expected '\(Character(UnicodeScalar(expected.underlying)))'")
+            throw Error.invalidFormat("expected '\(Character(expected))'")
         }
         index += 1
     }
@@ -560,9 +558,8 @@ extension RFC_3339.DateTime {
         code2: ASCII.Code
     ) throws(Error) {
         guard index < codes.count && (codes[index] == code1 || codes[index] == code2) else {
-            // audit: underlying — UnicodeScalar(UInt8) stdlib-interop boundary; pending BSLI integration
             throw Error.invalidFormat(
-                "expected '\(Character(UnicodeScalar(code1.underlying)))' or '\(Character(UnicodeScalar(code2.underlying)))'"
+                "expected '\(Character(code1))' or '\(Character(code2))'"
             )
         }
         index += 1
