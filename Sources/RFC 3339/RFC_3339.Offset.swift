@@ -238,11 +238,7 @@ extension RFC_3339.Offset: Binary.ASCII.Serializable {
 
     /// Convert ASCII digit code to numeric value
     private static func digitValue(_ code: ASCII.Code) -> Int? {
-        guard code >= ASCII.Code.`0` && code <= ASCII.Code.`9` else {
-            return nil
-        }
-        // audit: underlying — pending byte-arithmetic decision
-        return Int(code.underlying - ASCII.Code.`0`.underlying)
+        code.digitValue.map(Int.init)
     }
 
     /// Append 2-digit number with leading zero if needed

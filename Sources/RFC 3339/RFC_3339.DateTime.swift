@@ -428,10 +428,8 @@ extension RFC_3339.DateTime {
         var fractionString = ""
 
         // Parse all digits
-        while index < codes.count, let digit = digitValue(codes[index]) {
-            // audit: underlying — pending byte-arithmetic decision
-            let digitCode = ASCII.Code(ASCII.Code.`0`.underlying &+ UInt8(digit))
-            fractionString.append(Character(digitCode))
+        while index < codes.count, codes[index].isDigit {
+            fractionString.append(Character(codes[index]))
             index += 1
         }
 
@@ -531,11 +529,7 @@ extension RFC_3339.DateTime {
 
     /// Convert ASCII digit code to numeric value
     private static func digitValue(_ code: ASCII.Code) -> Int? {
-        guard code >= ASCII.Code.`0` && code <= ASCII.Code.`9` else {
-            return nil
-        }
-        // audit: underlying — pending byte-arithmetic decision
-        return Int(code.underlying - ASCII.Code.`0`.underlying)
+        code.digitValue.map(Int.init)
     }
 
     /// Expect specific code at current index
