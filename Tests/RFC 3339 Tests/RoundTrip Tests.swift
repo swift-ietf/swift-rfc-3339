@@ -5,6 +5,7 @@
 // Parse → Format → Parse cycles should preserve semantics
 
 import Testing
+import Binary_Serializable_Primitives
 
 @testable import RFC_3339
 

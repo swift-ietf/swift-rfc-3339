@@ -1,6 +1,8 @@
 // Time+RFC_3339.swift
 // swift-rfc-3339
 
+import Binary_Serializable_Primitives
+
 extension RFC_3339 {
     /// RFC 3339 wrapper for Time
     ///

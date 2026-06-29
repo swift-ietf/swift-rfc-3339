@@ -5,6 +5,7 @@
 // Tests boundary conditions and special cases per RFC 3339
 
 import Testing
+import Binary_Serializable_Primitives
 
 @testable import RFC_3339
 

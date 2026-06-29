@@ -4,6 +4,7 @@
 // Comprehensive tests for RFC_3339.DateTime formatting
 
 import Testing
+import Binary_Serializable_Primitives
 
 @testable import RFC_3339
 
