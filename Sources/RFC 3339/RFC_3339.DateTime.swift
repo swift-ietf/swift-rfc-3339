@@ -141,7 +141,12 @@ extension RFC_3339.DateTime: Binary.ASCII.Serializable {
 
         // Type-up: lift to ASCII.Code at the entry boundary so the body works
         // against ASCII.Code constants directly (RFC 3339 grammar is strict ASCII).
-        let arr = Array<ASCII.Code>(bytes)
+        let arr: [ASCII.Code]
+        do {
+            arr = try Array<ASCII.Code>(bytes)
+        } catch {
+            throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
+        }
         var index = 0
 
         // Parse full-date: YYYY-MM-DD
