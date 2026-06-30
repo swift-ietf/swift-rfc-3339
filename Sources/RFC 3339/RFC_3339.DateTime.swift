@@ -4,7 +4,6 @@
 public import ASCII_Serializer_Primitives
 public import Binary_Serializable_Primitives
 public import Parseable_ASCII_Primitives
-public import Serializer_Primitives
 
 extension RFC_3339 {
     /// RFC 3339 date-time value
@@ -78,14 +77,45 @@ extension RFC_3339.DateTime: Hashable {}
 
 // MARK: - ASCII Serialization
 
-extension RFC_3339.DateTime: Serializable, ASCII.Serializable, Binary.Serializable {
-    /// Canonical ASCII serializer for the RFC 3339 date-time form.
-    public static var serializer: Serializer_Primitives.Serializer.Pure<Self, [ASCII.Code]> {
-        Serializer_Primitives.Serializer.Pure { dateTime, buffer in
-            var bytes: [Byte] = []
-            serializeBytes(dateTime, into: &bytes)
-            buffer.append(contentsOf: bytes.map { ASCII.Code(unchecked: $0) })
+extension RFC_3339.DateTime: ASCII.Serializable, Binary.Serializable {
+    /// Own `ASCII.Serializable` verb ([FAM-012]) — the RFC 3339 date-time
+    /// (`full-date "T" full-time time-offset`), re-expressing the numeric
+    /// date/time formatting (year zero-pad, two-digit fields, fraction-trim)
+    /// directly over the `ASCII.Code` substrate and composing the already-re-cut
+    /// `Offset` **ASCII** verb for the trailing `time-offset`. Output is
+    /// byte-identical to the `Binary.Serializable` witness body (`serializeBytes`).
+    public static func serialize<Buffer: RangeReplaceableCollection>(
+        _ value: Self,
+        into buffer: inout Buffer
+    ) where Buffer.Element == ASCII.Code {
+        let time = value.time
+
+        // full-date: YYYY-MM-DD
+        appendYear(&buffer, time.year.rawValue)
+        buffer.append(ASCII.Code.hyphen)
+        appendTwoDigits(&buffer, time.month.rawValue)
+        buffer.append(ASCII.Code.hyphen)
+        appendTwoDigits(&buffer, time.day.rawValue)
+
+        // 'T' separator
+        buffer.append(ASCII.Code.T)
+
+        // partial-time: HH:MM:SS
+        appendTwoDigits(&buffer, time.hour.value)
+        buffer.append(ASCII.Code.colon)
+        appendTwoDigits(&buffer, time.minute.value)
+        buffer.append(ASCII.Code.colon)
+        appendTwoDigits(&buffer, time.second.value)
+
+        // time-secfrac (optional)
+        if let precision = value.precision {
+            appendFraction(&buffer, time: time, precision: precision)
+        } else {
+            appendFractionIfNonZero(&buffer, time: time)
         }
+
+        // time-offset — compose the re-cut Offset ASCII verb
+        RFC_3339.Offset.serialize(value.offset, into: &buffer)
     }
 
     /// Explicit `Binary.Serializable` witness disambiguating the two
@@ -359,6 +389,93 @@ extension RFC_3339.DateTime {
         }
 
         buffer.append(contentsOf: fractionString.utf8)
+    }
+}
+
+// MARK: - Formatting Helpers (ASCII.Code substrate)
+
+extension RFC_3339.DateTime {
+    /// Append 4-digit year (ASCII.Code substrate).
+    private static func appendYear<Buffer: RangeReplaceableCollection>(
+        _ buffer: inout Buffer,
+        _ year: Int
+    ) where Buffer.Element == ASCII.Code {
+        let absYear = abs(year)
+        if year < 0 {
+            buffer.append(ASCII.Code.hyphen)
+        }
+        if absYear < 10 {
+            buffer.append(contentsOf: [ASCII.Code.`0`, ASCII.Code.`0`, ASCII.Code.`0`])
+        } else if absYear < 100 {
+            buffer.append(contentsOf: [ASCII.Code.`0`, ASCII.Code.`0`])
+        } else if absYear < 1000 {
+            buffer.append(ASCII.Code.`0`)
+        }
+        buffer.append(contentsOf: String(absYear).utf8.map { ASCII.Code(unchecked: Byte($0)) })
+    }
+
+    /// Append 2-digit number with leading zero if needed (ASCII.Code substrate).
+    private static func appendTwoDigits<Buffer: RangeReplaceableCollection>(
+        _ buffer: inout Buffer,
+        _ value: Int
+    ) where Buffer.Element == ASCII.Code {
+        if value < 10 {
+            buffer.append(ASCII.Code.`0`)
+        }
+        buffer.append(contentsOf: String(value).utf8.map { ASCII.Code(unchecked: Byte($0)) })
+    }
+
+    /// Append fractional seconds with specified precision (ASCII.Code substrate).
+    private static func appendFraction<Buffer: RangeReplaceableCollection>(
+        _ buffer: inout Buffer,
+        time: Time,
+        precision: Int
+    ) where Buffer.Element == ASCII.Code {
+        guard precision > 0 && precision <= 9 else { return }
+
+        buffer.append(ASCII.Code.period)
+
+        let totalNanos = time.totalNanoseconds
+        // Calculate divisor: 10^(9 - precision)
+        var divisor = 1
+        for _ in 0..<(9 - precision) {
+            divisor *= 10
+        }
+        let truncated = totalNanos / divisor
+
+        var fractionString = String(truncated)
+        // Pad with leading zeros to reach requested precision
+        while fractionString.count < precision {
+            fractionString = "0" + fractionString
+        }
+
+        buffer.append(contentsOf: fractionString.utf8.map { ASCII.Code(unchecked: Byte($0)) })
+    }
+
+    /// Append fractional seconds only if non-zero (ASCII.Code substrate).
+    private static func appendFractionIfNonZero<Buffer: RangeReplaceableCollection>(
+        _ buffer: inout Buffer,
+        time: Time
+    ) where Buffer.Element == ASCII.Code {
+        let totalNanos = time.totalNanoseconds
+        guard totalNanos > 0 else { return }
+
+        buffer.append(ASCII.Code.period)
+
+        // Format with full precision, then trim trailing zeros
+        var fractionString = String(totalNanos)
+
+        // Pad to 9 digits
+        while fractionString.count < 9 {
+            fractionString = "0" + fractionString
+        }
+
+        // Remove trailing zeros
+        while fractionString.last == "0" {
+            fractionString.removeLast()
+        }
+
+        buffer.append(contentsOf: fractionString.utf8.map { ASCII.Code(unchecked: Byte($0)) })
     }
 }
 
