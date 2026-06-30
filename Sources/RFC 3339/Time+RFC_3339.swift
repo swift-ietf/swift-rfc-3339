@@ -79,6 +79,6 @@ extension RFC_3339.TimeWrapper {
     /// ```
     public func format(offset: RFC_3339.Offset = .utc, precision: Int? = nil) -> String {
         let dateTime = RFC_3339.DateTime(time: value, offset: offset, precision: precision)
-        return String(dateTime)
+        return dateTime.description
     }
 }

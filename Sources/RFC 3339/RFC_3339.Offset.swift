@@ -2,6 +2,9 @@
 // swift-rfc-3339
 
 public import ASCII_Serializer_Primitives
+public import Binary_Serializable_Primitives
+public import Parseable_ASCII_Primitives
+public import Serializer_Primitives
 
 extension RFC_3339 {
     /// UTC offset for RFC 3339 timestamps
@@ -125,11 +128,30 @@ extension RFC_3339.Offset.Error: CustomStringConvertible {
     }
 }
 
-// MARK: - Binary.ASCII.Serializable
+// MARK: - ASCII Serialization
 
-extension RFC_3339.Offset: Binary.ASCII.Serializable {
+extension RFC_3339.Offset: Serializable, ASCII.Serializable, Binary.Serializable {
+    /// Canonical ASCII serializer for the RFC 3339 time-offset (`Z` / `±HH:MM`).
+    public static var serializer: Serializer_Primitives.Serializer.Pure<Self, [ASCII.Code]> {
+        Serializer_Primitives.Serializer.Pure { offset, buffer in
+            var bytes: [Byte] = []
+            serializeBytes(offset, into: &bytes)
+            buffer.append(contentsOf: bytes.map { ASCII.Code(unchecked: $0) })
+        }
+    }
+
+    /// Explicit `Binary.Serializable` witness disambiguating the two
+    /// constraint-incomparable defaults.
     public static func serialize<Buffer: RangeReplaceableCollection>(
-        ascii offset: Self,
+        _ value: Self,
+        into buffer: inout Buffer
+    ) where Buffer.Element == Byte {
+        serializeBytes(value, into: &buffer)
+    }
+
+    /// Byte-domain serialization body (RFC 3339 time-offset).
+    private static func serializeBytes<Buffer: RangeReplaceableCollection>(
+        _ offset: Self,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
         switch offset {
@@ -151,6 +173,13 @@ extension RFC_3339.Offset: Binary.ASCII.Serializable {
             appendTwoDigits(&buffer, minutes)
         }
     }
+}
+
+extension RFC_3339.Offset: ASCII.Parseable {
+    /// Creates an offset by validating `string`'s UTF-8 bytes as ASCII.
+    public init(_ string: some StringProtocol) throws(Error) {
+        try self.init(ascii: [Byte](string.utf8))
+    }
 
     /// Parses an RFC 3339 offset from ASCII bytes
     ///
@@ -169,7 +198,7 @@ extension RFC_3339.Offset: Binary.ASCII.Serializable {
     ///
     /// - Parameter bytes: ASCII byte representation
     /// - Throws: `Error` if format is invalid
-    public init<Bytes: Collection>(ascii bytes: Bytes, in context: Void = ()) throws(Error)
+    public init<Bytes: Collection>(ascii bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
         guard !bytes.isEmpty else {
             throw Error.empty
@@ -260,8 +289,18 @@ extension RFC_3339.Offset: Binary.ASCII.Serializable {
 
 // MARK: - RawRepresentable & CustomStringConvertible
 
-extension RFC_3339.Offset: Binary.ASCII.RawRepresentable {
-    public typealias RawValue = String
+extension RFC_3339.Offset: Swift.RawRepresentable {
+    /// The offset's ASCII serialization as a `String` (computed from serialization).
+    public var rawValue: String {
+        String(decoding: serialized, as: UTF8.self)
+    }
+
+    public init?(rawValue: String) { try? self.init(rawValue) }
 }
 
-extension RFC_3339.Offset: CustomStringConvertible {}
+extension RFC_3339.Offset: CustomStringConvertible {
+    /// The offset's ASCII serialization decoded as a `String`.
+    public var description: String {
+        String(decoding: serialized, as: UTF8.self)
+    }
+}

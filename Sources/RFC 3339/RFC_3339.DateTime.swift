@@ -2,6 +2,9 @@
 // swift-rfc-3339
 
 public import ASCII_Serializer_Primitives
+public import Binary_Serializable_Primitives
+public import Parseable_ASCII_Primitives
+public import Serializer_Primitives
 
 extension RFC_3339 {
     /// RFC 3339 date-time value
@@ -73,11 +76,30 @@ extension RFC_3339 {
 
 extension RFC_3339.DateTime: Hashable {}
 
-// MARK: - Binary.ASCII.Serializable
+// MARK: - ASCII Serialization
 
-extension RFC_3339.DateTime: Binary.ASCII.Serializable {
+extension RFC_3339.DateTime: Serializable, ASCII.Serializable, Binary.Serializable {
+    /// Canonical ASCII serializer for the RFC 3339 date-time form.
+    public static var serializer: Serializer_Primitives.Serializer.Pure<Self, [ASCII.Code]> {
+        Serializer_Primitives.Serializer.Pure { dateTime, buffer in
+            var bytes: [Byte] = []
+            serializeBytes(dateTime, into: &bytes)
+            buffer.append(contentsOf: bytes.map { ASCII.Code(unchecked: $0) })
+        }
+    }
+
+    /// Explicit `Binary.Serializable` witness disambiguating the two
+    /// constraint-incomparable defaults.
     public static func serialize<Buffer: RangeReplaceableCollection>(
-        ascii dateTime: Self,
+        _ value: Self,
+        into buffer: inout Buffer
+    ) where Buffer.Element == Byte {
+        serializeBytes(value, into: &buffer)
+    }
+
+    /// Byte-domain serialization body (RFC 3339 date-time).
+    private static func serializeBytes<Buffer: RangeReplaceableCollection>(
+        _ dateTime: Self,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
         let time = dateTime.time
@@ -107,7 +129,14 @@ extension RFC_3339.DateTime: Binary.ASCII.Serializable {
         }
 
         // time-offset
-        RFC_3339.Offset.serialize(ascii: dateTime.offset, into: &buffer)
+        RFC_3339.Offset.serialize(dateTime.offset, into: &buffer)
+    }
+}
+
+extension RFC_3339.DateTime: ASCII.Parseable {
+    /// Creates a date-time by validating `string`'s UTF-8 bytes as ASCII.
+    public init(_ string: some StringProtocol) throws(Error) {
+        try self.init(ascii: [Byte](string.utf8))
     }
 
     /// Parses an RFC 3339 timestamp from ASCII bytes
@@ -132,7 +161,7 @@ extension RFC_3339.DateTime: Binary.ASCII.Serializable {
     ///
     /// - Parameter bytes: ASCII byte representation
     /// - Throws: `Error` if format is invalid
-    public init<Bytes: Collection>(ascii bytes: Bytes, in context: Void = ()) throws(Error)
+    public init<Bytes: Collection>(ascii bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
         // Minimum valid: "YYYY-MM-DDTHH:MM:SSZ" = 20 characters
         guard bytes.count >= 20 else {
@@ -213,11 +242,21 @@ extension RFC_3339.DateTime: Binary.ASCII.Serializable {
 
 // MARK: - RawRepresentable & CustomStringConvertible
 
-extension RFC_3339.DateTime: Binary.ASCII.RawRepresentable {
-    public typealias RawValue = String
+extension RFC_3339.DateTime: Swift.RawRepresentable {
+    /// The date-time's RFC 3339 ASCII serialization as a `String`.
+    public var rawValue: String {
+        String(decoding: serialized, as: UTF8.self)
+    }
+
+    public init?(rawValue: String) { try? self.init(rawValue) }
 }
 
-extension RFC_3339.DateTime: CustomStringConvertible {}
+extension RFC_3339.DateTime: CustomStringConvertible {
+    /// The date-time's RFC 3339 ASCII serialization decoded as a `String`.
+    public var description: String {
+        String(decoding: serialized, as: UTF8.self)
+    }
+}
 
 // MARK: - Instant Conversion
 
