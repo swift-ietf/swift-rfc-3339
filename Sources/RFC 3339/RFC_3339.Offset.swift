@@ -4,7 +4,6 @@
 public import ASCII_Serializer_Primitives
 public import Binary_Serializable_Primitives
 public import Parseable_ASCII_Primitives
-public import Serializer_Primitives
 
 extension RFC_3339 {
     /// UTC offset for RFC 3339 timestamps
@@ -130,13 +129,32 @@ extension RFC_3339.Offset.Error: CustomStringConvertible {
 
 // MARK: - ASCII Serialization
 
-extension RFC_3339.Offset: Serializable, ASCII.Serializable, Binary.Serializable {
-    /// Canonical ASCII serializer for the RFC 3339 time-offset (`Z` / `±HH:MM`).
-    public static var serializer: Serializer_Primitives.Serializer.Pure<Self, [ASCII.Code]> {
-        Serializer_Primitives.Serializer.Pure { offset, buffer in
-            var bytes: [Byte] = []
-            serializeBytes(offset, into: &bytes)
-            buffer.append(contentsOf: bytes.map { ASCII.Code(unchecked: $0) })
+extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
+    /// Own `ASCII.Serializable` verb ([FAM-012]) — the RFC 3339 time-offset
+    /// (`Z` / `-00:00` / `±HH:MM`), re-expressing the numeric byte body directly
+    /// over the `ASCII.Code` substrate (sign char + two-digit zero-pad). Output is
+    /// byte-identical to the `Binary.Serializable` witness body (`serializeBytes`).
+    public static func serialize<Buffer: RangeReplaceableCollection>(
+        _ value: Self,
+        into buffer: inout Buffer
+    ) where Buffer.Element == ASCII.Code {
+        switch value {
+        case .utc:
+            buffer.append(ASCII.Code.Z)
+
+        case .unknownLocalOffset:
+            buffer.append(contentsOf: "-00:00".utf8.map { ASCII.Code(unchecked: Byte($0)) })
+
+        case .offset(let seconds):
+            let sign: ASCII.Code = seconds >= 0 ? .plus : .hyphen
+            let absSeconds = abs(seconds)
+            let hours = absSeconds / 3600
+            let minutes = (absSeconds % 3600) / 60
+
+            buffer.append(sign)
+            appendTwoDigits(&buffer, hours)
+            buffer.append(ASCII.Code.colon)
+            appendTwoDigits(&buffer, minutes)
         }
     }
 
@@ -172,6 +190,17 @@ extension RFC_3339.Offset: Serializable, ASCII.Serializable, Binary.Serializable
             buffer.append(ASCII.Code.colon)
             appendTwoDigits(&buffer, minutes)
         }
+    }
+
+    /// Append 2-digit number with leading zero if needed (ASCII.Code substrate).
+    private static func appendTwoDigits<Buffer: RangeReplaceableCollection>(
+        _ buffer: inout Buffer,
+        _ value: Int
+    ) where Buffer.Element == ASCII.Code {
+        if value < 10 {
+            buffer.append(ASCII.Code.`0`)
+        }
+        buffer.append(contentsOf: String(value).utf8.map { ASCII.Code(unchecked: Byte($0)) })
     }
 }
 
