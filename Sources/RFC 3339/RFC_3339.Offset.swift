@@ -89,7 +89,7 @@ extension RFC_3339.Offset {
         /// Invalid format
         case invalidFormat(_ value: String)
 
-        /// Offset seconds out of valid range (-86340 to +86340, i.e., -23:59 to +23:59)
+        /// Offset seconds out of valid range (-86340 to +86340, that is, -23:59 to +23:59)
         case offsetOutOfRange(_ seconds: Int)
     }
 
@@ -238,7 +238,7 @@ extension RFC_3339.Offset: ASCII.Parseable {
         // non-ASCII bytes are fail-state).
         let arr: [ASCII.Code]
         do {
-            arr = try Array<ASCII.Code>(bytes)
+            arr = try [ASCII.Code](bytes)
         } catch {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
         }

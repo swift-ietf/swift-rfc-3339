@@ -4,8 +4,8 @@
 // Edge case tests for RFC 3339 implementation
 // Tests boundary conditions and special cases per RFC 3339
 
-import Testing
 import Binary_Serializable_Primitives
+import Testing
 
 @testable import RFC_3339
 

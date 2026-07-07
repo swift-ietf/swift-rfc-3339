@@ -28,6 +28,7 @@ extension RFC_3339.Validation {
     /// Validate leap second date
     ///
     /// Ensures that second=60 (leap second) only occurs on valid dates.
+    ///
     /// Per historical practice, leap seconds are only inserted on:
     /// - June 30 (month 6, day 30)
     /// - December 31 (month 12, day 31)

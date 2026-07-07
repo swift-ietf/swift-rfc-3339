@@ -202,7 +202,7 @@ extension RFC_3339.DateTime: ASCII.Parseable {
         // against ASCII.Code constants directly (RFC 3339 grammar is strict ASCII).
         let arr: [ASCII.Code]
         do {
-            arr = try Array<ASCII.Code>(bytes)
+            arr = try [ASCII.Code](bytes)
         } catch {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
         }
@@ -676,7 +676,8 @@ extension RFC_3339.DateTime {
     }
 
     /// Parse exactly 2 digits as integer
-    private static func parseTwoDigits(_ codes: [ASCII.Code], index: inout Int) throws(Error) -> Int {
+    private static func parseTwoDigits(_ codes: [ASCII.Code], index: inout Int) throws(Error) -> Int
+    {
         guard index + 2 <= codes.count,
             let d1 = digitValue(codes[index]),
             let d2 = digitValue(codes[index + 1])

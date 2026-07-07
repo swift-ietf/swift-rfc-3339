@@ -17,11 +17,11 @@ import Testing
 struct OffsetSerializationEquivalenceTests {
 
     @Test(arguments: [
-        RFC_3339.Offset.utc,                       // "Z"
-        RFC_3339.Offset.unknownLocalOffset,        // "-00:00"
-        RFC_3339.Offset.offset(seconds: 19800),    // "+05:30"
-        RFC_3339.Offset.offset(seconds: -28800),   // "-08:00"
-        RFC_3339.Offset.offset(seconds: 3600),     // "+01:00" (single-digit-hour zero-pad)
+        RFC_3339.Offset.utc,  // "Z"
+        RFC_3339.Offset.unknownLocalOffset,  // "-00:00"
+        RFC_3339.Offset.offset(seconds: 19800),  // "+05:30"
+        RFC_3339.Offset.offset(seconds: -28800),  // "-08:00"
+        RFC_3339.Offset.offset(seconds: 3600),  // "+01:00" (single-digit-hour zero-pad)
     ])
     func `ASCII verb output equals Binary witness output`(offset: RFC_3339.Offset) {
         // ASCII.Serializable verb output, projected to bytes.
