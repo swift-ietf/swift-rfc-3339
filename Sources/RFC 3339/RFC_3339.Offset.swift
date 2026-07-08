@@ -237,7 +237,7 @@ extension RFC_3339.Offset: ASCII.Parseable {
         // against ASCII.Code constants directly (RFC 3339 grammar is strict ASCII;
         // non-ASCII bytes are fail-state).
         let arr: [ASCII.Code]
-        do {
+        do throws(ASCII.Code.Error) {
             arr = try [ASCII.Code](bytes)
         } catch {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))

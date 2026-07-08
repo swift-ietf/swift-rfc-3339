@@ -201,7 +201,7 @@ extension RFC_3339.DateTime: ASCII.Parseable {
         // Type-up: lift to ASCII.Code at the entry boundary so the body works
         // against ASCII.Code constants directly (RFC 3339 grammar is strict ASCII).
         let arr: [ASCII.Code]
-        do {
+        do throws(ASCII.Code.Error) {
             arr = try [ASCII.Code](bytes)
         } catch {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
@@ -250,7 +250,7 @@ extension RFC_3339.DateTime: ASCII.Parseable {
 
         // Construct Time
         let time: Time
-        do {
+        do throws(Time.Error) {
             time = try Time(
                 year: year,
                 month: month,
@@ -668,7 +668,7 @@ extension RFC_3339.DateTime {
             return .utc
         }
 
-        do {
+        do throws(RFC_3339.Offset.Error) {
             return try RFC_3339.Offset(seconds: offsetSeconds)
         } catch {
             throw Error.invalidOffset("offset out of range: \(offsetSeconds)")
