@@ -11,8 +11,8 @@ import Testing
 // MARK: - Basic Formatting
 
 extension RFC_3339.DateTime.Test {
-    @Suite("RFC_3339.DateTime - UTC Formatting")
-    struct FormatterUTC {
+    @Suite
+    struct `Formatter UTC` {
         @Test
         func `Format simple UTC timestamp`() throws {
             let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
@@ -33,8 +33,8 @@ extension RFC_3339.DateTime.Test {
         }
     }
 
-    @Suite("RFC_3339.DateTime - Numeric Offsets")
-    struct FormatterNumericOffset {
+    @Suite
+    struct `Formatter Numeric Offset` {
         @Test
         func `Format with positive offset`() throws {
             let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
@@ -84,8 +84,8 @@ extension RFC_3339.DateTime.Test {
         }
     }
 
-    @Suite("RFC_3339.DateTime - Fractional Seconds")
-    struct FormatterFractionalSeconds {
+    @Suite
+    struct `Formatter Fractional Seconds` {
         @Test
         func `Format with millisecond precision`() throws {
             let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
@@ -153,8 +153,8 @@ extension RFC_3339.DateTime.Test {
         }
     }
 
-    @Suite("RFC_3339.DateTime - DateTime Formatting")
-    struct FormatterDateTime {
+    @Suite
+    struct `Formatter DateTime` {
         @Test
         func `Format DateTime directly`() throws {
             let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)

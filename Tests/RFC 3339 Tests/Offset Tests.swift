@@ -62,8 +62,8 @@ extension RFC_3339.Offset {
 }
 
 extension RFC_3339.Offset.Test {
-    @Suite("RFC_3339.Offset - Semantic Distinctions")
-    struct OffsetSemantics {
+    @Suite
+    struct `Offset Semantics` {
         @Test
         func `UTC has zero seconds`() {
             let offset = RFC_3339.Offset.utc
@@ -98,8 +98,8 @@ extension RFC_3339.Offset.Test {
 
     // MARK: - Offset Equality
 
-    @Suite("RFC_3339.Offset - Equality")
-    struct OffsetEquality {
+    @Suite
+    struct `Offset Equality` {
         @Test
         func `UTC equals itself`() {
             #expect(RFC_3339.Offset.utc == .utc)
@@ -127,8 +127,8 @@ extension RFC_3339.Offset.Test {
 
     // MARK: - Offset Properties
 
-    @Suite("RFC_3339.Offset - Properties")
-    struct OffsetProperties {
+    @Suite
+    struct `Offset Properties` {
         @Test
         func `isUTC true for UTC`() {
             #expect(RFC_3339.Offset.utc.isUTC)
@@ -156,8 +156,8 @@ extension RFC_3339.Offset.Test {
 
     // MARK: - Common Timezone Offsets
 
-    @Suite("RFC_3339.Offset - Common Timezones")
-    struct CommonTimezone {
+    @Suite
+    struct `Common Timezone` {
         @Test
         func `Common timezone offsets`() throws {
             let timezones: [(name: String, seconds: Int)] = [

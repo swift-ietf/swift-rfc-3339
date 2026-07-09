@@ -14,8 +14,8 @@ import RFC_3339
 import Testing
 
 extension RFC_3339.Offset.Test {
-    @Suite("RFC_3339.Offset - Serialization Equivalence")
-    struct SerializationEquivalence {
+    @Suite
+    struct `Serialization Equivalence` {
 
         @Test(arguments: [
             RFC_3339.Offset.utc,  // "Z"

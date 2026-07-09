@@ -12,8 +12,8 @@ import Testing
 // MARK: - Year Range Edge Cases
 
 extension RFC_3339.DateTime.Test {
-    @Suite("RFC 3339 - Year Boundaries")
-    struct YearBoundary {
+    @Suite
+    struct `Year Boundary` {
         @Test
         func `Parse year 0000 (minimum allowed)`() throws {
             let input = "0000-01-01T00:00:00Z"
@@ -55,8 +55,8 @@ extension RFC_3339.DateTime.Test {
 
     // MARK: - Leap Second Edge Cases
 
-    @Suite("RFC 3339 - Leap Seconds")
-    struct LeapSecond {
+    @Suite
+    struct `Leap Second` {
         @Test
         func `Leap second on December 31`() throws {
             let input = "1990-12-31T23:59:60Z"
@@ -101,8 +101,8 @@ extension RFC_3339.DateTime.Test {
 
     // MARK: - Offset Edge Cases
 
-    @Suite("RFC 3339 - Offset Boundaries")
-    struct OffsetBoundary {
+    @Suite
+    struct `Offset Boundary` {
         @Test
         func `Maximum positive offset (+23:59)`() throws {
             let input = "2024-01-01T00:00:00+23:59"
@@ -162,8 +162,8 @@ extension RFC_3339.DateTime.Test {
 
     // MARK: - Fractional Second Edge Cases
 
-    @Suite("RFC 3339 - Fractional Second Boundaries")
-    struct FractionalSecondEdgeCase {
+    @Suite
+    struct `Fractional Second Edge Case` {
         @Test
         func `Single digit fractional second`() throws {
             let input = "2024-01-01T00:00:00.1Z"
@@ -233,8 +233,8 @@ extension RFC_3339.DateTime.Test {
 
     // MARK: - Date/Time Component Boundaries
 
-    @Suite("RFC 3339 - Component Boundaries")
-    struct ComponentBoundary {
+    @Suite
+    struct `Component Boundary` {
         @Test
         func `Midnight (start of day)`() throws {
             let input = "2024-01-01T00:00:00Z"

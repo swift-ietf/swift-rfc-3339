@@ -10,8 +10,8 @@ import Testing
 @testable import RFC_3339
 
 extension RFC_3339.DateTime.Test {
-    @Suite("RFC 3339 - Round-trip Conversions")
-    struct RoundTrip {
+    @Suite
+    struct `Round Trip` {
         @Test
         func `Round-trip: parse then format`() throws {
             let original = "1985-04-12T23:20:50.52Z"
