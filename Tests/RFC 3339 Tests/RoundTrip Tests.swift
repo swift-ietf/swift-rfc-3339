@@ -40,7 +40,7 @@ struct RoundTripTests {
         "9999-12-31T23:59:59Z",
         "2015-06-30T23:59:60Z",
     ])
-    func roundTripVariousTimestamps(timestamp: String) throws {
+    func `round Trip Various Timestamps`(timestamp: String) throws {
         let dt = try RFC_3339.DateTime(timestamp)
         let formatted = String(dt)
         let dt2 = try RFC_3339.DateTime(formatted)
