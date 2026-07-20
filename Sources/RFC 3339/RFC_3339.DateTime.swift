@@ -225,11 +225,6 @@ extension RFC_3339.DateTime: ASCII.Parseable {
         try Self.expect(arr, index: &index, code: ASCII.Code.colon)
         let second = try Self.parseSecond(arr, index: &index)
 
-        // Validate leap second
-        if second == 60 {
-            try RFC_3339.Validation.validateLeapSecond(month: month, day: day)
-        }
-
         // Parse optional fractional seconds
         var millisecond = 0
         var microsecond = 0
@@ -242,6 +237,18 @@ extension RFC_3339.DateTime: ASCII.Parseable {
 
         // Parse time-offset
         let offset = try Self.parseOffset(arr, index: &index)
+
+        // Validate leap second against the UTC instant (offset-aware)
+        if second == 60 {
+            try RFC_3339.Validation.validateLeapSecond(
+                year: year,
+                month: month,
+                day: day,
+                hour: hour,
+                minute: minute,
+                offsetSeconds: offset.seconds
+            )
+        }
 
         // Ensure we consumed the entire string
         guard index == arr.count else {
