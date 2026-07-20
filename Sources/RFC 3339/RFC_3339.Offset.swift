@@ -49,7 +49,10 @@ extension RFC_3339 {
 
         /// Numeric timezone offset in seconds
         ///
-        /// - Parameter seconds: Offset from UTC in seconds, positive for east, negative for west
+        /// - Parameter seconds: Offset from UTC in seconds, positive for east, negative for west.
+        ///   Prefer the validating ``init(seconds:)``; payloads outside ±23:59
+        ///   (or not whole minutes) are clamped/truncated at serialization so
+        ///   wire output is always valid RFC 3339.
         case offset(seconds: Int)
     }
 }
@@ -146,8 +149,13 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
             buffer.append(contentsOf: "-00:00".utf8.map { ASCII.Code(unchecked: Byte($0)) })
 
         case .offset(let seconds):
-            let sign: ASCII.Code = seconds >= 0 ? .plus : .hyphen
-            let absSeconds = abs(seconds)
+            // The raw case is publicly constructible with any Int; clamp the
+            // payload onto the RFC 3339 offset domain (±23:59) so
+            // serialization is total onto valid wire output. Sub-minute
+            // remainders are truncated (the grammar has no seconds field).
+            let clamped = min(max(seconds, -Self.maxOffsetSeconds), Self.maxOffsetSeconds)
+            let sign: ASCII.Code = clamped >= 0 ? .plus : .hyphen
+            let absSeconds = abs(clamped)
             let hours = absSeconds / 3600
             let minutes = (absSeconds % 3600) / 60
 
@@ -157,6 +165,9 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
             appendTwoDigits(&buffer, minutes)
         }
     }
+
+    /// Maximum RFC 3339 numeric offset magnitude in seconds (23:59).
+    private static var maxOffsetSeconds: Int { 23 * 3600 + 59 * 60 }
 
     /// Explicit `Binary.Serializable` witness disambiguating the two
     /// constraint-incomparable defaults.
@@ -180,8 +191,11 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
             buffer.append(contentsOf: "-00:00".utf8)
 
         case .offset(let seconds):
-            let sign: ASCII.Code = seconds >= 0 ? .plus : .hyphen
-            let absSeconds = abs(seconds)
+            // Clamp onto the RFC 3339 offset domain (±23:59); see the ASCII
+            // substrate body — the two bodies stay byte-identical.
+            let clamped = min(max(seconds, -maxOffsetSeconds), maxOffsetSeconds)
+            let sign: ASCII.Code = clamped >= 0 ? .plus : .hyphen
+            let absSeconds = abs(clamped)
             let hours = absSeconds / 3600
             let minutes = (absSeconds % 3600) / 60
 

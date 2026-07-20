@@ -64,9 +64,16 @@ extension RFC_3339 {
         /// - Parameters:
         ///   - time: Calendar date and time
         ///   - offset: UTC offset (defaults to `.utc`)
-        ///   - precision: Optional fractional seconds precision (0-9 digits)
+        ///   - precision: Optional fractional seconds precision (0-9 digits).
+        ///     Values outside 0-9 are clamped into that range (0 serializes
+        ///     no fractional digits; 9 is full nanosecond precision).
         public init(time: Time, offset: Offset = .utc, precision: Int? = nil) {
-            self.init(__unchecked: (), time: time, offset: offset, precision: precision)
+            self.init(
+                __unchecked: (),
+                time: time,
+                offset: offset,
+                precision: precision.map { min(max($0, 0), 9) }
+            )
         }
     }
 }
@@ -315,15 +322,18 @@ extension Instant {
 // MARK: - Formatting Helpers
 
 extension RFC_3339.DateTime {
-    /// Append 4-digit year
+    /// Serializable year domain per the RFC 3339 `date-fullyear` grammar
+    /// (exactly four digits): 0-9999. `Time.Year` is unbounded, so
+    /// serialization clamps into this domain to stay total onto valid wire
+    /// output (there is no negative-year or five-digit emission path).
+    private static var yearDomain: ClosedRange<Int> { 0...9999 }
+
+    /// Append 4-digit year (clamped to the serializable domain 0-9999)
     private static func appendYear<Buffer: RangeReplaceableCollection>(
         _ buffer: inout Buffer,
         _ year: Int
     ) where Buffer.Element == Byte {
-        let absYear = abs(year)
-        if year < 0 {
-            buffer.append(ASCII.Code.hyphen)
-        }
+        let absYear = min(max(year, yearDomain.lowerBound), yearDomain.upperBound)
         if absYear < 10 {
             buffer.append(contentsOf: [ASCII.Code.`0`, ASCII.Code.`0`, ASCII.Code.`0`])
         } else if absYear < 100 {
@@ -402,15 +412,12 @@ extension RFC_3339.DateTime {
 // MARK: - Formatting Helpers (ASCII.Code substrate)
 
 extension RFC_3339.DateTime {
-    /// Append 4-digit year (ASCII.Code substrate).
+    /// Append 4-digit year (ASCII.Code substrate; clamped to 0-9999).
     private static func appendYear<Buffer: RangeReplaceableCollection>(
         _ buffer: inout Buffer,
         _ year: Int
     ) where Buffer.Element == ASCII.Code {
-        let absYear = abs(year)
-        if year < 0 {
-            buffer.append(ASCII.Code.hyphen)
-        }
+        let absYear = min(max(year, yearDomain.lowerBound), yearDomain.upperBound)
         if absYear < 10 {
             buffer.append(contentsOf: [ASCII.Code.`0`, ASCII.Code.`0`, ASCII.Code.`0`])
         } else if absYear < 100 {
