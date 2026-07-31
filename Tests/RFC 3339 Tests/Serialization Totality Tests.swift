@@ -61,8 +61,15 @@ extension RFC_3339.DateTime.Test {
         @Test
         func `Precision above 9 clamps to nanosecond precision`() throws {
             let time = try Time(
-                year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0,
-                millisecond: 123, microsecond: 456, nanosecond: 789
+                year: 2024,
+                month: 11,
+                day: 22,
+                hour: 14,
+                minute: 30,
+                second: 0,
+                millisecond: 123,
+                microsecond: 456,
+                nanosecond: 789
             )
             let dt = RFC_3339.DateTime(time: time, offset: .utc, precision: 15)
             let wire = String(dt)
@@ -73,7 +80,12 @@ extension RFC_3339.DateTime.Test {
         @Test
         func `Negative precision clamps to zero fractional digits`() throws {
             let time = try Time(
-                year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0,
+                year: 2024,
+                month: 11,
+                day: 22,
+                hour: 14,
+                minute: 30,
+                second: 0,
                 millisecond: 123
             )
             let dt = RFC_3339.DateTime(time: time, offset: .utc, precision: -3)
