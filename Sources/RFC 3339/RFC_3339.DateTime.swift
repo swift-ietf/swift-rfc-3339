@@ -292,7 +292,13 @@ extension RFC_3339.DateTime: Swift.RawRepresentable {
         String(decoding: serialized, as: UTF8.self)
     }
 
-    public init?(rawValue: String) { try? self.init(rawValue) }
+    public init?(rawValue: String) {
+        do throws(Error) {
+            try self.init(rawValue)
+        } catch {
+            return nil
+        }
+    }
 }
 
 extension RFC_3339.DateTime: CustomStringConvertible {
@@ -543,9 +549,16 @@ extension RFC_3339.DateTime {
 
         // Validate day is in valid range for month/year
         let y = Time.Year(year)
-        guard let m = try? Time.Month(month),
-            (try? Time.Month.Day(day, in: m, year: y)) != nil
-        else {
+        let m: Time.Month
+        do throws(Time.Month.Error) {
+            m = try Time.Month(month)
+        } catch {
+            throw Error.invalidDay("\(day) for month \(month), year \(year)")
+        }
+
+        do throws(Time.Month.Day.Error) {
+            _ = try Time.Month.Day(day, in: m, year: y)
+        } catch {
             throw Error.invalidDay("\(day) for month \(month), year \(year)")
         }
 

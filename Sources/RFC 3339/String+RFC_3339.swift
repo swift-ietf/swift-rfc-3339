@@ -81,6 +81,11 @@ extension RFC_3339.StringWrapper {
     /// "invalid".rfc3339.isValid               // false
     /// ```
     public var isValid: Bool {
-        (try? parse()) != nil
+        do throws(RFC_3339.DateTime.Error) {
+            _ = try parse()
+            return true
+        } catch {
+            return false
+        }
     }
 }

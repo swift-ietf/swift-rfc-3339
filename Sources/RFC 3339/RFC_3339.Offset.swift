@@ -67,6 +67,7 @@ extension RFC_3339.Offset {
         switch self {
         case .utc, .unknownLocalOffset:
             return 0
+
         case .offset(let seconds):
             return seconds
         }
@@ -122,8 +123,10 @@ extension RFC_3339.Offset.Error: CustomStringConvertible {
         switch self {
         case .empty:
             return "Offset cannot be empty"
+
         case .invalidFormat(let value):
             return "Invalid offset format: '\(value)'"
+
         case .offsetOutOfRange(let seconds):
             return "Offset \(seconds) seconds is out of range (±23:59)"
         }
@@ -338,7 +341,13 @@ extension RFC_3339.Offset: Swift.RawRepresentable {
         String(decoding: serialized, as: UTF8.self)
     }
 
-    public init?(rawValue: String) { try? self.init(rawValue) }
+    public init?(rawValue: String) {
+        do throws(Error) {
+            try self.init(rawValue)
+        } catch {
+            return nil
+        }
+    }
 }
 
 extension RFC_3339.Offset: CustomStringConvertible {
