@@ -244,7 +244,7 @@ extension RFC_3339.Offset: ASCII.Parseable {
     ///
     /// - Parameter bytes: ASCII byte representation
     /// - Throws: `Error` if format is invalid
-    public init<Bytes: Collection>(ascii bytes: Bytes) throws(Error)
+    public init<Bytes: Swift.Collection>(ascii bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
         guard !bytes.isEmpty else {
             throw Error.empty
