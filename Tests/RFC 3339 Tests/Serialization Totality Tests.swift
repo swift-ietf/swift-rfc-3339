@@ -1,10 +1,3 @@
-// Serialization Totality Tests.swift
-// swift-rfc-3339
-//
-// Regression tests for fable-448 F-002: publicly constructible values must
-// serialize onto valid RFC 3339 wire output (raw Offset payloads, year
-// domain, precision).
-
 import Binary_Serializable_Primitives
 import Testing
 
@@ -15,8 +8,7 @@ extension RFC_3339.Offset.Test {
     struct `Serialization Totality` {
         @Test
         func `Out-of-range positive raw payload serializes to valid offset`() throws {
-            // .offset(seconds:) is publicly constructible with any Int;
-            // serialization must clamp onto the RFC 3339 offset grammar.
+
             let offset = RFC_3339.Offset.offset(seconds: 100_000)
             let wire = String(decoding: offset.serialized, as: UTF8.self)
             let reparsed = try RFC_3339.Offset(wire)

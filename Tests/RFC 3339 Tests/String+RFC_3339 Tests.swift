@@ -1,13 +1,6 @@
-// String+RFC_3339 Tests.swift
-// swift-rfc-3339
-//
-// Tests for String and Time extensions
-
 import Testing
 
 @testable import RFC_3339
-
-// MARK: - String Extension Tests
 
 extension String {
     @Suite("String+RFC_3339 - Parsing")
@@ -53,7 +46,7 @@ extension String.Test {
 
         @Test
         func `String extension: isValid for missing separator`() {
-            #expect(!"2024-11-22 14:30:00".rfc3339.isValid)  // missing T
+            #expect(!"2024-11-22 14:30:00".rfc3339.isValid)
         }
 
         @Test
@@ -80,12 +73,12 @@ extension String.Test {
                 "not a timestamp",
                 "2024-11-22",
                 "14:30:00",
-                "2024-11-22 14:30:00Z",  // space instead of T
-                "2024-11-22T14:30:00",  // missing offset
-                "24-11-22T14:30:00Z",  // 2-digit year
-                "2024-13-01T00:00:00Z",  // invalid month
-                "2024-02-30T00:00:00Z",  // invalid day
-                "2024-01-01T25:00:00Z",  // invalid hour
+                "2024-11-22 14:30:00Z",
+                "2024-11-22T14:30:00",
+                "24-11-22T14:30:00Z",
+                "2024-13-01T00:00:00Z",
+                "2024-02-30T00:00:00Z",
+                "2024-01-01T25:00:00Z",
             ]
 
             for timestamp in invalidTimestamps {
@@ -94,8 +87,6 @@ extension String.Test {
         }
     }
 }
-
-// MARK: - Time Extension Tests
 
 extension Time {
     @Suite("Time+RFC_3339 - Formatting")
@@ -158,10 +149,6 @@ extension Time {
     }
 }
 
-// MARK: - Integration Tests
-
-// SWIFT-TEST-002: SKIP — cross-type integration suite (String + Time), no single
-// tested-type host; adjudication residue per drain-brief-test002.md STEP-2(c).
 @Suite("String+RFC_3339 - Integration with Time")
 struct StringTimeIntegrationTests {
     @Test

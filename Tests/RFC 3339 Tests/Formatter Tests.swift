@@ -1,14 +1,7 @@
-// Formatter Tests.swift
-// swift-rfc-3339
-//
-// Comprehensive tests for RFC_3339.DateTime formatting
-
 import Binary_Serializable_Primitives
 import Testing
 
 @testable import RFC_3339
-
-// MARK: - Basic Formatting
 
 extension RFC_3339.DateTime.Test {
     @Suite
@@ -67,13 +60,13 @@ extension RFC_3339.DateTime.Test {
             let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0)
 
             let testCases: [(seconds: Int, expected: String)] = [
-                (-43200, "2024-01-01T00:00:00-12:00"),  // UTC-12
-                (-28800, "2024-01-01T00:00:00-08:00"),  // PST
-                (-18000, "2024-01-01T00:00:00-05:00"),  // EST
-                (3600, "2024-01-01T00:00:00+01:00"),  // CET
-                (19800, "2024-01-01T00:00:00+05:30"),  // IST
-                (32400, "2024-01-01T00:00:00+09:00"),  // JST
-                (43200, "2024-01-01T00:00:00+12:00"),  // UTC+12
+                (-43200, "2024-01-01T00:00:00-12:00"),
+                (-28800, "2024-01-01T00:00:00-08:00"),
+                (-18000, "2024-01-01T00:00:00-05:00"),
+                (3600, "2024-01-01T00:00:00+01:00"),
+                (19800, "2024-01-01T00:00:00+05:30"),
+                (32400, "2024-01-01T00:00:00+09:00"),
+                (43200, "2024-01-01T00:00:00+12:00"),
             ]
 
             for (seconds, expected) in testCases {

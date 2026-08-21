@@ -1,15 +1,7 @@
-// EdgeCases Tests.swift
-// swift-rfc-3339
-//
-// Edge case tests for RFC 3339 implementation
-// Tests boundary conditions and special cases per RFC 3339
-
 import Binary_Serializable_Primitives
 import Testing
 
 @testable import RFC_3339
-
-// MARK: - Year Range Edge Cases
 
 extension RFC_3339.DateTime.Test {
     @Suite
@@ -53,8 +45,6 @@ extension RFC_3339.DateTime.Test {
         }
     }
 
-    // MARK: - Leap Second Edge Cases
-
     @Suite
     struct `Leap Second` {
         @Test
@@ -79,14 +69,12 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Negative leap second (second=58)`() throws {
-            // While RFC 3339 grammar allows second=58 for negative leap seconds,
-            // they have never occurred in practice. Our implementation allows them
-            // but doesn't special-case validate them like positive leap seconds.
+
             let input = "2024-06-30T23:59:58Z"
             let dt = try RFC_3339.DateTime(input)
 
             #expect(dt.time.second.value == 58)
-            // Should parse successfully - second=58 is valid per grammar
+
         }
 
         @Test
@@ -99,8 +87,6 @@ extension RFC_3339.DateTime.Test {
         }
     }
 
-    // MARK: - Offset Edge Cases
-
     @Suite
     struct `Offset Boundary` {
         @Test
@@ -108,7 +94,7 @@ extension RFC_3339.DateTime.Test {
             let input = "2024-01-01T00:00:00+23:59"
             let dt = try RFC_3339.DateTime(input)
 
-            #expect(dt.offset == .offset(seconds: 86340))  // 23*3600 + 59*60
+            #expect(dt.offset == .offset(seconds: 86340))
         }
 
         @Test
@@ -139,7 +125,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Zero offset edge cases`() throws {
-            // All three zero offset representations
+
             let z = try RFC_3339.DateTime("2024-01-01T00:00:00Z")
             let plus = try RFC_3339.DateTime("2024-01-01T00:00:00+00:00")
             let minus = try RFC_3339.DateTime("2024-01-01T00:00:00-00:00")
@@ -148,19 +134,15 @@ extension RFC_3339.DateTime.Test {
             #expect(plus.offset == .utc)
             #expect(minus.offset == .unknownLocalOffset)
 
-            // All have zero seconds
             #expect(z.offset.seconds == 0)
             #expect(plus.offset.seconds == 0)
             #expect(minus.offset.seconds == 0)
 
-            // But different semantic meaning
             #expect(z.offset.isUTC)
             #expect(plus.offset.isUTC)
             #expect(minus.offset.isUTC)
         }
     }
-
-    // MARK: - Fractional Second Edge Cases
 
     @Suite
     struct `Fractional Second Edge Case` {
@@ -187,7 +169,6 @@ extension RFC_3339.DateTime.Test {
             let input = "2024-01-01T00:00:00.1234567890123Z"
             let dt = try RFC_3339.DateTime(input)
 
-            // Should truncate to first 9 digits
             #expect(dt.time.millisecond.value == 123)
             #expect(dt.time.microsecond.value == 456)
             #expect(dt.time.nanosecond.value == 789)
@@ -230,8 +211,6 @@ extension RFC_3339.DateTime.Test {
             #expect(formatted == "2024-01-01T00:00:00.001002003Z")
         }
     }
-
-    // MARK: - Date/Time Component Boundaries
 
     @Suite
     struct `Component Boundary` {

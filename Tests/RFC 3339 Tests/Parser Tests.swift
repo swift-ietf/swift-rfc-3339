@@ -1,13 +1,6 @@
-// Parser Tests.swift
-// swift-rfc-3339
-//
-// Comprehensive tests for RFC_3339.DateTime parsing
-
 import Testing
 
 @testable import RFC_3339
-
-// MARK: - Basic Parsing
 
 extension RFC_3339.DateTime.Test {
     @Suite
@@ -63,7 +56,7 @@ extension RFC_3339.DateTime.Test {
             let dt = try RFC_3339.DateTime(input)
 
             #expect(dt.time.year == 2024)
-            #expect(dt.offset == .offset(seconds: 19800))  // 5.5 hours
+            #expect(dt.offset == .offset(seconds: 19800))
         }
 
         @Test
@@ -72,7 +65,7 @@ extension RFC_3339.DateTime.Test {
             let dt = try RFC_3339.DateTime(input)
 
             #expect(dt.time.year == 2024)
-            #expect(dt.offset == .offset(seconds: -28800))  // -8 hours
+            #expect(dt.offset == .offset(seconds: -28800))
         }
 
         @Test
@@ -99,11 +92,11 @@ extension RFC_3339.DateTime.Test {
         @Test
         func `Parse various fractional second precisions`() throws {
             let inputs = [
-                ("2024-01-01T00:00:00.1Z", 100),  // 1 digit
-                ("2024-01-01T00:00:00.12Z", 120),  // 2 digits
-                ("2024-01-01T00:00:00.123Z", 123),  // 3 digits
-                ("2024-01-01T00:00:00.1234Z", 123),  // 4 digits (truncated)
-                ("2024-01-01T00:00:00.123456789Z", 123),  // 9 digits (truncated)
+                ("2024-01-01T00:00:00.1Z", 100),
+                ("2024-01-01T00:00:00.12Z", 120),
+                ("2024-01-01T00:00:00.123Z", 123),
+                ("2024-01-01T00:00:00.1234Z", 123),
+                ("2024-01-01T00:00:00.123456789Z", 123),
             ]
 
             for (input, expectedMillis) in inputs {
@@ -163,7 +156,7 @@ extension RFC_3339.DateTime.Test {
         @Test
         func `Parse substring`() throws {
             let full = "timestamp: 2024-11-22T14:30:00Z end"
-            let substring = full.dropFirst(11).dropLast(4)  // Extract just the timestamp
+            let substring = full.dropFirst(11).dropLast(4)
 
             let dt = try RFC_3339.DateTime(String(substring))
 

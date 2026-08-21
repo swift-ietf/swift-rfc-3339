@@ -1,37 +1,25 @@
-// RFC_3339.DateTime.Error.swift
-// swift-rfc-3339
-
 extension RFC_3339.DateTime {
-    /// Errors that can occur during RFC 3339 date-time parsing
+
     public enum Error: Swift.Error, Sendable, Equatable {
-        /// Invalid format - does not match RFC 3339 grammar
+
         case invalidFormat(_ value: String)
 
-        /// Year component invalid
         case invalidYear(_ value: String)
 
-        /// Month component out of range (1-12)
         case invalidMonth(_ value: String)
 
-        /// Day component invalid for given month/year
         case invalidDay(_ value: String)
 
-        /// Hour component out of range (0-23)
         case invalidHour(_ value: String)
 
-        /// Minute component out of range (0-59)
         case invalidMinute(_ value: String)
 
-        /// Second component out of range (0-60, allowing leap second)
         case invalidSecond(_ value: String)
 
-        /// Fractional seconds invalid
         case invalidFraction(_ value: String)
 
-        /// Timezone offset invalid
         case invalidOffset(_ value: String)
 
-        /// Leap second (60) not on valid date (Jun 30 or Dec 31)
         case invalidLeapSecond(month: Int, day: Int)
     }
 }

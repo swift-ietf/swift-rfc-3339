@@ -1,68 +1,21 @@
-// RFC_3339.Offset.swift
-// swift-rfc-3339
-
 public import ASCII_Serializer_Primitives
 public import Binary_Serializable_Primitives
 public import Parseable_ASCII_Primitives
 
 extension RFC_3339 {
-    /// UTC offset for RFC 3339 timestamps
-    ///
-    /// Represents the timezone offset component of an RFC 3339 date-time.
-    ///
-    /// ## Semantic Distinctions
-    ///
-    /// RFC 3339 Section 4.3 defines important semantic differences:
-    ///
-    /// - **UTC (Z or +00:00)**: The time is in UTC and UTC is the preferred reference point.
-    ///   Both "Z" and "+00:00" are treated identically and map to `.utc`.
-    /// - **Unknown local offset (-00:00)**: The time is in UTC but the offset to local time is unknown.
-    ///   The string "-00:00" specifically indicates this semantic difference.
-    /// - **Numeric offset**: The time is in a specific timezone relative to UTC.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// // Parse from string
-    /// let offset = try RFC_3339.Offset("+05:30")
-    ///
-    /// // Serialize to string
-    /// let formatted = String(RFC_3339.Offset.utc)  // "Z"
-    /// ```
-    ///
-    /// ## See Also
-    ///
-    /// - ``DateTime``
+
     public enum Offset: Sendable, Equatable, Hashable, Codable {
-        /// UTC time with zero local offset
-        ///
-        /// Formats as "Z" in compact form or "+00:00" in numeric form.
-        /// Indicates the generating system is in UTC.
+
         case utc
 
-        /// UTC time with unknown local offset
-        ///
-        /// Formats as "-00:00". Per RFC 3339 Section 4.3:
-        /// "If the time in UTC is known, but the offset to local time is unknown,
-        /// this can be represented with an offset of '-00:00'."
         case unknownLocalOffset
 
-        /// Numeric timezone offset in seconds
-        ///
-        /// - Parameter seconds: Offset from UTC in seconds, positive for east, negative for west.
-        ///   Prefer the validating ``init(seconds:)``; payloads outside ±23:59
-        ///   (or not whole minutes) are clamped/truncated at serialization so
-        ///   wire output is always valid RFC 3339.
         case offset(seconds: Int)
     }
 }
 
-// MARK: - Computed Properties
-
 extension RFC_3339.Offset {
-    /// Offset in seconds from UTC
-    ///
-    /// Both `.utc` and `.unknownLocalOffset` return 0, as they both represent UTC time.
+
     public var seconds: Int {
         switch self {
         case .utc, .unknownLocalOffset:
@@ -73,39 +26,24 @@ extension RFC_3339.Offset {
         }
     }
 
-    /// Whether this offset represents UTC time
-    ///
-    /// Returns true for both `.utc` and `.unknownLocalOffset`, as both represent
-    /// instants at UTC, regardless of semantic distinction.
     public var isUTC: Bool {
         seconds == 0
     }
 }
 
-// MARK: - Validation
-
 extension RFC_3339.Offset {
-    /// Error conditions for offset validation
+
     public enum Error: Swift.Error, Sendable, Equatable {
-        /// Input is empty
+
         case empty
 
-        /// Invalid format
         case invalidFormat(_ value: String)
 
-        /// Offset seconds out of valid range (-86340 to +86340, that is, -23:59 to +23:59)
         case offsetOutOfRange(_ seconds: Int)
     }
 
-    /// Create offset from seconds with validation
-    ///
-    /// Validates that the offset is within RFC 3339 allowed range of ±23:59.
-    ///
-    /// - Parameter seconds: Offset in seconds from UTC
-    /// - Returns: Validated offset
-    /// - Throws: ``Error/offsetOutOfRange(_:)`` if seconds is outside valid range
     public init(seconds: Int) throws(Error) {
-        let maxOffset = 23 * 3600 + 59 * 60  // 23:59 = 86340 seconds
+        let maxOffset = 23 * 3600 + 59 * 60
         guard seconds >= -maxOffset && seconds <= maxOffset else {
             throw Error.offsetOutOfRange(seconds)
         }
@@ -133,13 +71,8 @@ extension RFC_3339.Offset.Error: CustomStringConvertible {
     }
 }
 
-// MARK: - ASCII Serialization
-
 extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
-    /// Own `ASCII.Serializable` verb ([FAM-012]) — the RFC 3339 time-offset
-    /// (`Z` / `-00:00` / `±HH:MM`), re-expressing the numeric byte body directly
-    /// over the `ASCII.Code` substrate (sign char + two-digit zero-pad). Output is
-    /// byte-identical to the `Binary.Serializable` witness body (`serializeBytes`).
+
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ value: Self,
         into buffer: inout Buffer
@@ -152,10 +85,7 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
             buffer.append(contentsOf: "-00:00".utf8.map { ASCII.Code(unchecked: Byte($0)) })
 
         case .offset(let seconds):
-            // The raw case is publicly constructible with any Int; clamp the
-            // payload onto the RFC 3339 offset domain (±23:59) so
-            // serialization is total onto valid wire output. Sub-minute
-            // remainders are truncated (the grammar has no seconds field).
+
             let clamped = min(max(seconds, -Self.maxOffsetSeconds), Self.maxOffsetSeconds)
             let sign: ASCII.Code = clamped >= 0 ? .plus : .hyphen
             let absSeconds = abs(clamped)
@@ -169,11 +99,8 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
         }
     }
 
-    /// Maximum RFC 3339 numeric offset magnitude in seconds (23:59).
     private static var maxOffsetSeconds: Int { 23 * 3600 + 59 * 60 }
 
-    /// Explicit `Binary.Serializable` witness disambiguating the two
-    /// constraint-incomparable defaults.
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ value: Self,
         into buffer: inout Buffer
@@ -181,7 +108,6 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
         serializeBytes(value, into: &buffer)
     }
 
-    /// Byte-domain serialization body (RFC 3339 time-offset).
     private static func serializeBytes<Buffer: RangeReplaceableCollection>(
         _ offset: Self,
         into buffer: inout Buffer
@@ -194,8 +120,7 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
             buffer.append(contentsOf: "-00:00".utf8)
 
         case .offset(let seconds):
-            // Clamp onto the RFC 3339 offset domain (±23:59); see the ASCII
-            // substrate body — the two bodies stay byte-identical.
+
             let clamped = min(max(seconds, -maxOffsetSeconds), maxOffsetSeconds)
             let sign: ASCII.Code = clamped >= 0 ? .plus : .hyphen
             let absSeconds = abs(clamped)
@@ -209,7 +134,6 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
         }
     }
 
-    /// Append 2-digit number with leading zero if needed (ASCII.Code substrate).
     private static func appendTwoDigits<Buffer: RangeReplaceableCollection>(
         _ buffer: inout Buffer,
         _ value: Int
@@ -222,37 +146,17 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
 }
 
 extension RFC_3339.Offset: ASCII.Parseable {
-    /// Creates an offset by validating `string`'s UTF-8 bytes as ASCII.
+
     public init(_ string: some StringProtocol) throws(Error) {
         try self.init(ascii: [Byte](string.utf8))
     }
 
-    /// Parses an RFC 3339 offset from ASCII bytes
-    ///
-    /// ## Category Theory
-    ///
-    /// Parsing transformation:
-    /// - **Domain**: [Byte] (ASCII bytes)
-    /// - **Codomain**: RFC_3339.Offset (structured data)
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let bytes = Array<Byte>("+05:30".utf8)
-    /// let offset = try RFC_3339.Offset(ascii: bytes)
-    /// ```
-    ///
-    /// - Parameter bytes: ASCII byte representation
-    /// - Throws: `Error` if format is invalid
     public init<Bytes: Swift.Collection>(ascii bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
         guard !bytes.isEmpty else {
             throw Error.empty
         }
 
-        // Type-up: lift to ASCII.Code at the entry boundary so the body works
-        // against ASCII.Code constants directly (RFC 3339 grammar is strict ASCII;
-        // non-ASCII bytes are fail-state).
         let arr: [ASCII.Code]
         do throws(ASCII.Code.Error) {
             arr = try [ASCII.Code](bytes)
@@ -260,13 +164,11 @@ extension RFC_3339.Offset: ASCII.Parseable {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
         }
 
-        // Check for 'Z' or 'z' (UTC)
         if arr.count == 1 && (arr[0] == ASCII.Code.Z || arr[0] == ASCII.Code.z) {
             self = .utc
             return
         }
 
-        // Parse numeric offset: (+|-)HH:MM
         guard arr.count >= 6 else {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
         }
@@ -298,7 +200,6 @@ extension RFC_3339.Offset: ASCII.Parseable {
 
         let offsetSeconds = sign * (hours * 3600 + minutes * 60)
 
-        // Special cases for zero offset
         if offsetSeconds == 0 {
             if sign == -1 {
                 self = .unknownLocalOffset
@@ -316,12 +217,10 @@ extension RFC_3339.Offset: ASCII.Parseable {
         self = .offset(seconds: offsetSeconds)
     }
 
-    /// Convert ASCII digit code to numeric value
     private static func digitValue(_ code: ASCII.Code) -> Int? {
         code.digitValue.map(Int.init)
     }
 
-    /// Append 2-digit number with leading zero if needed
     private static func appendTwoDigits<Buffer: RangeReplaceableCollection>(
         _ buffer: inout Buffer,
         _ value: Int
@@ -333,10 +232,8 @@ extension RFC_3339.Offset: ASCII.Parseable {
     }
 }
 
-// MARK: - RawRepresentable & CustomStringConvertible
-
 extension RFC_3339.Offset: Swift.RawRepresentable {
-    /// The offset's ASCII serialization as a `String` (computed from serialization).
+
     public var rawValue: String {
         String(decoding: serialized, as: UTF8.self)
     }
@@ -351,7 +248,7 @@ extension RFC_3339.Offset: Swift.RawRepresentable {
 }
 
 extension RFC_3339.Offset: CustomStringConvertible {
-    /// The offset's ASCII serialization decoded as a `String`.
+
     public var description: String {
         String(decoding: serialized, as: UTF8.self)
     }

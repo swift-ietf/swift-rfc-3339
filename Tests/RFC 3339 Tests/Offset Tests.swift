@@ -1,13 +1,6 @@
-// Offset Tests.swift
-// swift-rfc-3339
-//
-// Comprehensive tests for RFC_3339.Offset
-
 import Testing
 
 @testable import RFC_3339
-
-// MARK: - Offset Creation
 
 extension RFC_3339.Offset {
     @Suite("RFC_3339.Offset - Creation and Validation")
@@ -28,21 +21,21 @@ extension RFC_3339.Offset {
 
         @Test
         func `Maximum valid offset`() throws {
-            let maxSeconds = 23 * 3600 + 59 * 60  // 23:59
+            let maxSeconds = 23 * 3600 + 59 * 60
             let offset = try RFC_3339.Offset(seconds: maxSeconds)
             #expect(offset == .offset(seconds: 86340))
         }
 
         @Test
         func `Minimum valid offset`() throws {
-            let minSeconds = -(23 * 3600 + 59 * 60)  // -23:59
+            let minSeconds = -(23 * 3600 + 59 * 60)
             let offset = try RFC_3339.Offset(seconds: minSeconds)
             #expect(offset == .offset(seconds: -86340))
         }
 
         @Test
         func `Offset beyond maximum throws error`() {
-            let tooLarge = 24 * 3600  // 24:00
+            let tooLarge = 24 * 3600
             #expect(throws: RFC_3339.Offset.Error.self) {
                 _ = try RFC_3339.Offset(seconds: tooLarge)
             }
@@ -50,14 +43,12 @@ extension RFC_3339.Offset {
 
         @Test
         func `Offset beyond minimum throws error`() {
-            let tooSmall = -(24 * 3600)  // -24:00
+            let tooSmall = -(24 * 3600)
             #expect(throws: RFC_3339.Offset.Error.self) {
                 _ = try RFC_3339.Offset(seconds: tooSmall)
             }
         }
     }
-
-    // MARK: - Offset Semantics
 
 }
 
@@ -84,8 +75,8 @@ extension RFC_3339.Offset.Test {
             let unknown = RFC_3339.Offset.unknownLocalOffset
 
             #expect(utc != unknown)
-            #expect(utc.seconds == unknown.seconds)  // Same seconds
-            #expect(utc.isUTC && unknown.isUTC)  // Both are UTC
+            #expect(utc.seconds == unknown.seconds)
+            #expect(utc.isUTC && unknown.isUTC)
         }
 
         @Test
@@ -95,8 +86,6 @@ extension RFC_3339.Offset.Test {
             #expect(offset != .unknownLocalOffset)
         }
     }
-
-    // MARK: - Offset Equality
 
     @Suite
     struct `Offset Equality` {
@@ -125,8 +114,6 @@ extension RFC_3339.Offset.Test {
         }
     }
 
-    // MARK: - Offset Properties
-
     @Suite
     struct `Offset Properties` {
         @Test
@@ -153,8 +140,6 @@ extension RFC_3339.Offset.Test {
             #expect(RFC_3339.Offset.offset(seconds: -28800).seconds == -28800)
         }
     }
-
-    // MARK: - Common Timezone Offsets
 
     @Suite
     struct `Common Timezone` {

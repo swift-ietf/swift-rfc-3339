@@ -1,9 +1,3 @@
-// RoundTrip Tests.swift
-// swift-rfc-3339
-//
-// Comprehensive round-trip conversion tests
-// Parse → Format → Parse cycles should preserve semantics
-
 import Binary_Serializable_Primitives
 import Testing
 
@@ -18,7 +12,6 @@ extension RFC_3339.DateTime.Test {
             let dt = try RFC_3339.DateTime(original)
             let formatted = String(dt)
 
-            // Parse again to compare
             let dt2 = try RFC_3339.DateTime(formatted)
 
             #expect(dt.time.year == dt2.time.year)
@@ -46,7 +39,6 @@ extension RFC_3339.DateTime.Test {
             let formatted = String(dt)
             let dt2 = try RFC_3339.DateTime(formatted)
 
-            // Verify semantic equality (not string equality, as formatter may normalize)
             #expect(dt.time.year == dt2.time.year)
             #expect(dt.time.month == dt2.time.month)
             #expect(dt.time.day == dt2.time.day)
@@ -61,15 +53,13 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Round-trip with different case`() throws {
-            // Input has lowercase, output will have uppercase
+
             let input = "2024-11-22t14:30:00z"
             let dt = try RFC_3339.DateTime(input)
             let formatted = String(dt)
 
-            // Should normalize to uppercase
             #expect(formatted == "2024-11-22T14:30:00Z")
 
-            // But parse back should be identical
             let dt2 = try RFC_3339.DateTime(formatted)
             #expect(dt.time.year == dt2.time.year)
             #expect(dt.offset == dt2.offset)
@@ -84,7 +74,6 @@ extension RFC_3339.DateTime.Test {
 
             let formatted = String(dt)
 
-            // Should normalize to Z (preferred form)
             #expect(formatted == "2024-11-22T14:30:00Z")
 
             let dt2 = try RFC_3339.DateTime(formatted)
@@ -100,7 +89,6 @@ extension RFC_3339.DateTime.Test {
 
             let formatted = String(dt)
 
-            // Should preserve -00:00 (not Z)
             #expect(formatted == "2024-11-22T14:30:00-00:00")
 
             let dt2 = try RFC_3339.DateTime(formatted)
@@ -142,11 +130,9 @@ extension RFC_3339.DateTime.Test {
             )
             let dateTime = RFC_3339.DateTime(time: time, offset: .utc, precision: 6)
 
-            // Format with specific precision
             let formatted = String(dateTime)
             #expect(formatted == "2024-01-01T00:00:00.123000Z")
 
-            // Parse back
             let dt2 = try RFC_3339.DateTime(formatted)
 
             #expect(dt2.time.millisecond.value == 123)

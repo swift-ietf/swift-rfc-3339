@@ -1,14 +1,3 @@
-// DateTimeSerializationEquivalenceTests.swift
-// swift-rfc-3339
-//
-// [FAM-012] composite re-cut guard. The DateTime `ASCII.Serializable` verb
-// (numeric date/time formatting re-expressed directly over the `ASCII.Code`
-// substrate, composing the re-cut `Offset` ASCII verb) MUST emit byte-identical
-// output to the `Binary.Serializable` witness (`serializeBytes`). The package's
-// existing formatter assertions exercise exact strings; this asserts the refactor
-// invariant directly (ASCII output == Binary output) for the non-trivial
-// numeric/zero-pad/fraction-trim paths, so no expected string is hand-derived.
-
 import RFC_3339
 import Testing
 
@@ -18,9 +7,7 @@ extension RFC_3339.DateTime {
 
         @Test
         func `ASCII verb output equals Binary witness output`() throws {
-            // A non-zero fractional second forces the fraction-trim branch and a
-            // non-UTC numeric offset forces the sign/zero-pad branch of the re-cut
-            // Offset verb — the paths transcribed into the ASCII verb.
+
             let time = try Time(
                 year: 2024,
                 month: 11,
@@ -34,13 +21,11 @@ extension RFC_3339.DateTime {
             )
             let dateTime = RFC_3339.DateTime(
                 time: time,
-                offset: .offset(seconds: 19800)  // +05:30
+                offset: .offset(seconds: 19800)
             )
 
-            // ASCII.Serializable verb output, projected to bytes.
             let viaASCII: [Byte] = dateTime.serialized
 
-            // Binary.Serializable witness output.
             var viaBinary: [Byte] = []
             RFC_3339.DateTime.serialize(dateTime, into: &viaBinary)
 
@@ -49,8 +34,7 @@ extension RFC_3339.DateTime {
 
         @Test
         func `ASCII verb output equals Binary witness output with explicit precision`() throws {
-            // Explicit precision forces the fixed-precision fraction branch; a
-            // negative offset forces the hyphen-sign branch.
+
             let time = try Time(
                 year: 2024,
                 month: 1,
@@ -64,7 +48,7 @@ extension RFC_3339.DateTime {
             )
             let dateTime = RFC_3339.DateTime(
                 time: time,
-                offset: .offset(seconds: -28800),  // -08:00
+                offset: .offset(seconds: -28800),
                 precision: 6
             )
 
