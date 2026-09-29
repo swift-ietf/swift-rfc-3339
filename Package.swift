@@ -15,58 +15,40 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-molecules/swift-ascii-serializer.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-molecules/swift-binary-serializer.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-molecules/swift-ascii-parser.git",
-            branch: "main"
-        ),
-        .package(
             url: "https://github.com/swift-atoms/swift-standard-library-extensions.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-binary.git",
-            branch: "main"
-        ),
+            url: "https://github.com/swift-atoms/swift-binary.git",
+            branch: "main", traits: ["Serializer"]),
         .package(
-            url: "https://github.com/swift-molecules/swift-time.git",
+            url: "https://github.com/swift-atoms/swift-time.git",
             branch: "main"
         ),
+        .package(url: "https://github.com/swift-atoms/swift-ascii.git", branch: "main", traits: ["Parser", "Serializer"]),
+        .package(url: "https://github.com/swift-atoms/swift-calendar.git", branch: "main"),
+        .package(url: "https://github.com/swift-molecules/swift-calendar-gregorian.git", branch: "main"),
     ],
     targets: [
         .target(
             name: "RFC 3339",
             dependencies: [
                 .product(
-                    name: "ASCII Serializer",
-                    package: "swift-ascii-serializer"
-                ),
-                .product(
-                    name: "Binary Serializable",
-                    package: "swift-binary-serializer"
-                ),
-                .product(
-                    name: "Parseable ASCII",
-                    package: "swift-ascii-parser"
-                ),
-                .product(
                     name: "Standard Library Extensions",
                     package: "swift-standard-library-extensions"
                 ),
                 .product(name: "Binary", package: "swift-binary"),
                 .product(name: "Time", package: "swift-time"),
+                .product(name: "ASCII", package: "swift-ascii"),
+                .product(name: "Calendar", package: "swift-calendar"),
+                .product(name: "Calendar Gregorian", package: "swift-calendar-gregorian"),
             ]
         ),
         .testTarget(
             name: "RFC 3339 Tests",
             dependencies: [
-                .target(name: "RFC 3339")
+                .target(name: "RFC 3339"),
+                .product(name: "Binary", package: "swift-binary"),
             ]
         ),
     ],

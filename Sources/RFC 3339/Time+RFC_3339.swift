@@ -1,17 +1,19 @@
-import Binary_Serializable
+import Binary
+public import Calendar
+public import Calendar_Gregorian
 
 extension RFC_3339 {
 
     public struct TimeWrapper {
-        public let value: Time
+        public let value: Gregorian.DateTime
 
-        internal init(_ value: Time) {
+        internal init(_ value: Gregorian.DateTime) {
             self.value = value
         }
     }
 }
 
-extension Time {
+extension Calendar::DateTime where Date == Gregorian.Date {
 
     public var rfc3339: RFC_3339.TimeWrapper {
         RFC_3339.TimeWrapper(self)

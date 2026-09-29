@@ -1,4 +1,4 @@
-import Binary_Serializable
+import Binary
 import Testing
 
 @testable import RFC_3339
@@ -32,7 +32,7 @@ extension RFC_3339.DateTime.Test {
     struct `Serialization Totality` {
         @Test
         func `Year above 9999 serializes to parseable output`() throws {
-            let time = try Time(year: 12345, month: 1, day: 2, hour: 3, minute: 4, second: 5)
+            let time = try Gregorian.DateTime(year: 12345, month: 1, day: 2, hour: 3, minute: 4, second: 5)
             let dt = RFC_3339.DateTime(time: time, offset: .utc)
             let wire = String(dt)
             let reparsed = try RFC_3339.DateTime(wire)
@@ -42,7 +42,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Negative year serializes to parseable output`() throws {
-            let time = try Time(year: -1, month: 1, day: 2, hour: 3, minute: 4, second: 5)
+            let time = try Gregorian.DateTime(year: -1, month: 1, day: 2, hour: 3, minute: 4, second: 5)
             let dt = RFC_3339.DateTime(time: time, offset: .utc)
             let wire = String(dt)
             let reparsed = try RFC_3339.DateTime(wire)
@@ -52,7 +52,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Precision above 9 clamps to nanosecond precision`() throws {
-            let time = try Time(
+            let time = try Gregorian.DateTime(
                 year: 2024,
                 month: 11,
                 day: 22,
@@ -71,7 +71,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Negative precision clamps to zero fractional digits`() throws {
-            let time = try Time(
+            let time = try Gregorian.DateTime(
                 year: 2024,
                 month: 11,
                 day: 22,
@@ -88,7 +88,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Raw offset payload round-trips through parse`() throws {
-            let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
+            let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
             let dt = RFC_3339.DateTime(time: time, offset: .offset(seconds: 99_999))
             let wire = String(dt)
             _ = try RFC_3339.DateTime(wire)

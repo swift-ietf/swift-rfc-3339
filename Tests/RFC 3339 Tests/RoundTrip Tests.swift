@@ -1,4 +1,4 @@
-import Binary_Serializable
+import Binary
 import Testing
 
 @testable import RFC_3339
@@ -119,7 +119,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Round-trip format with explicit precision`() throws {
-            let time = try Time(
+            let time = try Gregorian.DateTime(
                 year: 2024,
                 month: 1,
                 day: 1,

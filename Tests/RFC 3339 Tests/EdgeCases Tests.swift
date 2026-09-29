@@ -1,4 +1,4 @@
-import Binary_Serializable
+import Binary
 import Testing
 
 @testable import RFC_3339
@@ -28,7 +28,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Format year 0000`() throws {
-            let time = try Time(year: 0, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+            let time = try Gregorian.DateTime(year: 0, month: 1, day: 1, hour: 0, minute: 0, second: 0)
             let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
             let formatted = String(dateTime)
 
@@ -37,7 +37,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Format year 9999`() throws {
-            let time = try Time(year: 9999, month: 12, day: 31, hour: 23, minute: 59, second: 59)
+            let time = try Gregorian.DateTime(year: 9999, month: 12, day: 31, hour: 23, minute: 59, second: 59)
             let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
             let formatted = String(dateTime)
 
@@ -79,7 +79,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Format leap second`() throws {
-            let time = try Time(year: 2015, month: 6, day: 30, hour: 23, minute: 59, second: 60)
+            let time = try Gregorian.DateTime(year: 2015, month: 6, day: 30, hour: 23, minute: 59, second: 60)
             let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
             let formatted = String(dateTime)
 
@@ -107,7 +107,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Format maximum positive offset`() throws {
-            let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+            let time = try Gregorian.DateTime(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0)
             let dateTime = RFC_3339.DateTime(time: time, offset: .offset(seconds: 86340))
             let formatted = String(dateTime)
 
@@ -116,7 +116,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Format maximum negative offset`() throws {
-            let time = try Time(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+            let time = try Gregorian.DateTime(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0)
             let dateTime = RFC_3339.DateTime(time: time, offset: .offset(seconds: -86340))
             let formatted = String(dateTime)
 
@@ -176,7 +176,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Format precision 0 omits decimal point`() throws {
-            let time = try Time(
+            let time = try Gregorian.DateTime(
                 year: 2024,
                 month: 1,
                 day: 1,
@@ -194,7 +194,7 @@ extension RFC_3339.DateTime.Test {
 
         @Test
         func `Format precision 9 (nanoseconds)`() throws {
-            let time = try Time(
+            let time = try Gregorian.DateTime(
                 year: 2024,
                 month: 1,
                 day: 1,

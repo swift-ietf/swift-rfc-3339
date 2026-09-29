@@ -1,24 +1,25 @@
-public import ASCII_Serializer
-public import Binary_Serializable
-public import Parseable_ASCII
+public import ASCII
+public import Calendar
+public import Calendar_Gregorian
+public import Binary
 
 extension RFC_3339 {
 
-    public struct DateTime: Sendable, Codable {
+    public struct DateTime: Sendable {
 
-        public let time: Time
+        public let time: Gregorian.DateTime
 
         public let offset: Offset
 
         public let precision: Int?
 
-        private init(__unchecked: Void, time: Time, offset: Offset, precision: Int?) {
+        private init(__unchecked: Void, time: Gregorian.DateTime, offset: Offset, precision: Int?) {
             self.time = time
             self.offset = offset
             self.precision = precision
         }
 
-        public init(time: Time, offset: Offset = .utc, precision: Int? = nil) {
+        public init(time: Gregorian.DateTime, offset: Offset = .utc, precision: Int? = nil) {
             self.init(
                 __unchecked: (),
                 time: time,
@@ -160,9 +161,9 @@ extension RFC_3339.DateTime: ASCII.Parseable {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
         }
 
-        let time: Time
-        do throws(Time.Error) {
-            time = try Time(
+        let time: Gregorian.DateTime
+        do throws(Gregorian.DateTime.Error) {
+            time = try Gregorian.DateTime(
                 year: year,
                 month: month,
                 day: day,
@@ -203,14 +204,16 @@ extension RFC_3339.DateTime: CustomStringConvertible {
     }
 }
 
-@available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *)
-extension Instant {
+extension RFC_3339.DateTime: Codable {}
+
+extension Time.Instant {
 
     public init(_ dateTime: RFC_3339.DateTime) {
-
-        let utcSeconds = dateTime.time.secondsSinceEpoch - dateTime.offset.seconds
-        let utcTime = Time(secondsSinceEpoch: utcSeconds)
-        self.init(utcTime)
+        self.init(
+            _unchecked: (),
+            secondsSinceUnixEpoch: Int64(dateTime.time.secondsSinceEpoch - dateTime.offset.seconds),
+            nanosecondFraction: Int32(dateTime.time.totalNanoseconds)
+        )
     }
 }
 
@@ -245,7 +248,7 @@ extension RFC_3339.DateTime {
 
     private static func appendFraction<Buffer: RangeReplaceableCollection>(
         _ buffer: inout Buffer,
-        time: Time,
+        time: Gregorian.DateTime,
         precision: Int
     ) where Buffer.Element == Byte {
         guard precision > 0 && precision <= 9 else { return }
@@ -271,7 +274,7 @@ extension RFC_3339.DateTime {
 
     private static func appendFractionIfNonZero<Buffer: RangeReplaceableCollection>(
         _ buffer: inout Buffer,
-        time: Time
+        time: Gregorian.DateTime
     ) where Buffer.Element == Byte {
         let totalNanos = time.totalNanoseconds
         guard totalNanos > 0 else { return }
@@ -321,7 +324,7 @@ extension RFC_3339.DateTime {
 
     private static func appendFraction<Buffer: RangeReplaceableCollection>(
         _ buffer: inout Buffer,
-        time: Time,
+        time: Gregorian.DateTime,
         precision: Int
     ) where Buffer.Element == ASCII.Code {
         guard precision > 0 && precision <= 9 else { return }
@@ -347,7 +350,7 @@ extension RFC_3339.DateTime {
 
     private static func appendFractionIfNonZero<Buffer: RangeReplaceableCollection>(
         _ buffer: inout Buffer,
-        time: Time
+        time: Gregorian.DateTime
     ) where Buffer.Element == ASCII.Code {
         let totalNanos = time.totalNanoseconds
         guard totalNanos > 0 else { return }
@@ -412,16 +415,16 @@ extension RFC_3339.DateTime {
 
         let day = try parseTwoDigits(codes, index: &index)
 
-        let y = Time.Year(year)
-        let m: Time.Month
-        do throws(Time.Month.Error) {
-            m = try Time.Month(month)
+        let y = Gregorian.Year(year)
+        let m: Gregorian.Month
+        do throws(Gregorian.Month.Error) {
+            m = try Gregorian.Month(month)
         } catch {
             throw Error.invalidDay("\(day) for month \(month), year \(year)")
         }
 
-        do throws(Time.Month.Day.Error) {
-            _ = try Time.Month.Day(day, in: m, year: y)
+        do throws(Gregorian.Month.Day.Error) {
+            _ = try Gregorian.Month.Day(day, in: m, year: y)
         } catch {
             throw Error.invalidDay("\(day) for month \(month), year \(year)")
         }

@@ -8,7 +8,7 @@ extension RFC_3339.DateTime {
         @Test
         func `ASCII verb output equals Binary witness output`() throws {
 
-            let time = try Time(
+            let time = try Gregorian.DateTime(
                 year: 2024,
                 month: 11,
                 day: 22,
@@ -35,7 +35,7 @@ extension RFC_3339.DateTime {
         @Test
         func `ASCII verb output equals Binary witness output with explicit precision`() throws {
 
-            let time = try Time(
+            let time = try Gregorian.DateTime(
                 year: 2024,
                 month: 1,
                 day: 1,

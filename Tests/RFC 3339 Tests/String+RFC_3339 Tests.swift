@@ -88,12 +88,12 @@ extension String.Test {
     }
 }
 
-extension Time {
+extension RFC_3339.TimeWrapper {
     @Suite("Time+RFC_3339 - Formatting")
     struct Test {
         @Test
         func `Time extension: format with default UTC`() throws {
-            let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
+            let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
             let formatted = time.rfc3339.format()
 
             #expect(formatted == "2024-11-22T14:30:00Z")
@@ -101,7 +101,7 @@ extension Time {
 
         @Test
         func `Time extension: format with explicit offset`() throws {
-            let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
+            let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
             let formatted = time.rfc3339.format(offset: .offset(seconds: -28800))
 
             #expect(formatted == "2024-11-22T14:30:00-08:00")
@@ -109,7 +109,7 @@ extension Time {
 
         @Test
         func `Time extension: format with precision`() throws {
-            let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
+            let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
             let formatted = time.rfc3339.format(precision: 3)
 
             #expect(formatted == "2024-11-22T14:30:00.000Z")
@@ -117,7 +117,7 @@ extension Time {
 
         @Test
         func `Time extension: format with offset and precision`() throws {
-            let time = try Time(
+            let time = try Gregorian.DateTime(
                 year: 2024,
                 month: 11,
                 day: 22,
@@ -133,7 +133,7 @@ extension Time {
 
         @Test
         func `Time extension: format with fractional seconds`() throws {
-            let time = try Time(
+            let time = try Gregorian.DateTime(
                 year: 1985,
                 month: 4,
                 day: 12,
@@ -177,7 +177,7 @@ struct StringTimeIntegrationTests {
 
     @Test
     func `Format then validate`() throws {
-        let time = try Time(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
+        let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
         let formatted = time.rfc3339.format()
 
         #expect(formatted.rfc3339.isValid)
