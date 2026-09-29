@@ -77,17 +77,17 @@ extension RFC_3339.DateTime: ASCII.Serializable, Binary.Serializable {
         let time = dateTime.time
 
         appendYear(&buffer, time.year.rawValue)
-        buffer.append(ASCII.Code.hyphen)
+        buffer.append(ASCII.Code.hyphen.byte)
         appendTwoDigits(&buffer, time.month.rawValue)
-        buffer.append(ASCII.Code.hyphen)
+        buffer.append(ASCII.Code.hyphen.byte)
         appendTwoDigits(&buffer, time.day.rawValue)
 
-        buffer.append(ASCII.Code.T)
+        buffer.append(ASCII.Code.T.byte)
 
         appendTwoDigits(&buffer, time.hour.value)
-        buffer.append(ASCII.Code.colon)
+        buffer.append(ASCII.Code.colon.byte)
         appendTwoDigits(&buffer, time.minute.value)
-        buffer.append(ASCII.Code.colon)
+        buffer.append(ASCII.Code.colon.byte)
         appendTwoDigits(&buffer, time.second.value)
 
         if let precision = dateTime.precision {
@@ -103,7 +103,7 @@ extension RFC_3339.DateTime: ASCII.Serializable, Binary.Serializable {
 extension RFC_3339.DateTime: ASCII.Parseable {
 
     public init(_ string: some StringProtocol) throws(Error) {
-        try self.init(ascii: [Byte](string.utf8))
+        try self.init(ascii: string.utf8.map(Byte.init(bitPattern:)))
     }
 
     public init<Bytes: Swift.Collection>(ascii bytes: Bytes) throws(Error)
@@ -115,7 +115,7 @@ extension RFC_3339.DateTime: ASCII.Parseable {
 
         let arr: [ASCII.Code]
         do throws(ASCII.Code.Error) {
-            arr = try [ASCII.Code](bytes)
+            arr = try bytes.map { byte throws(ASCII.Code.Error) in try ASCII.Code(byte) }
         } catch {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
         }
@@ -227,13 +227,13 @@ extension RFC_3339.DateTime {
     ) where Buffer.Element == Byte {
         let absYear = min(max(year, yearDomain.lowerBound), yearDomain.upperBound)
         if absYear < 10 {
-            buffer.append(contentsOf: [ASCII.Code.`0`, ASCII.Code.`0`, ASCII.Code.`0`])
+            buffer.append(contentsOf: [ASCII.Code.`0`.byte, ASCII.Code.`0`.byte, ASCII.Code.`0`.byte])
         } else if absYear < 100 {
-            buffer.append(contentsOf: [ASCII.Code.`0`, ASCII.Code.`0`])
+            buffer.append(contentsOf: [ASCII.Code.`0`.byte, ASCII.Code.`0`.byte])
         } else if absYear < 1000 {
-            buffer.append(ASCII.Code.`0`)
+            buffer.append(ASCII.Code.`0`.byte)
         }
-        buffer.append(contentsOf: String(absYear).utf8)
+        buffer.append(contentsOf: [Byte](utf8: String(absYear)))
     }
 
     private static func appendTwoDigits<Buffer: RangeReplaceableCollection>(
@@ -241,9 +241,9 @@ extension RFC_3339.DateTime {
         _ value: Int
     ) where Buffer.Element == Byte {
         if value < 10 {
-            buffer.append(ASCII.Code.`0`)
+            buffer.append(ASCII.Code.`0`.byte)
         }
-        buffer.append(contentsOf: String(value).utf8)
+        buffer.append(contentsOf: [Byte](utf8: String(value)))
     }
 
     private static func appendFraction<Buffer: RangeReplaceableCollection>(
@@ -253,7 +253,7 @@ extension RFC_3339.DateTime {
     ) where Buffer.Element == Byte {
         guard precision > 0 && precision <= 9 else { return }
 
-        buffer.append(ASCII.Code.period)
+        buffer.append(ASCII.Code.period.byte)
 
         let totalNanos = time.totalNanoseconds
 
@@ -269,7 +269,7 @@ extension RFC_3339.DateTime {
             fractionString = "0" + fractionString
         }
 
-        buffer.append(contentsOf: fractionString.utf8)
+        buffer.append(contentsOf: [Byte](utf8: fractionString))
     }
 
     private static func appendFractionIfNonZero<Buffer: RangeReplaceableCollection>(
@@ -279,7 +279,7 @@ extension RFC_3339.DateTime {
         let totalNanos = time.totalNanoseconds
         guard totalNanos > 0 else { return }
 
-        buffer.append(ASCII.Code.period)
+        buffer.append(ASCII.Code.period.byte)
 
         var fractionString = String(totalNanos)
 
@@ -291,7 +291,7 @@ extension RFC_3339.DateTime {
             fractionString.removeLast()
         }
 
-        buffer.append(contentsOf: fractionString.utf8)
+        buffer.append(contentsOf: [Byte](utf8: fractionString))
     }
 }
 
@@ -375,13 +375,13 @@ extension RFC_3339.DateTime {
 
     private static func parseYear(_ codes: [ASCII.Code], index: inout Int) throws(Error) -> Int {
         guard index + 4 <= codes.count else {
-            throw Error.invalidYear(String(decoding: codes[index...], as: UTF8.self))
+            throw Error.invalidYear(String(ascii: codes[index...]))
         }
 
         var year = 0
         for _ in 0..<4 {
             guard let digit = digitValue(codes[index]) else {
-                throw Error.invalidYear(String(decoding: codes[index...], as: UTF8.self))
+                throw Error.invalidYear(String(ascii: codes[index...]))
             }
             year = year * 10 + digit
             index += 1
@@ -392,7 +392,7 @@ extension RFC_3339.DateTime {
 
     private static func parseMonth(_ codes: [ASCII.Code], index: inout Int) throws(Error) -> Int {
         guard index + 2 <= codes.count else {
-            throw Error.invalidMonth(String(decoding: codes[index...], as: UTF8.self))
+            throw Error.invalidMonth(String(ascii: codes[index...]))
         }
 
         let month = try parseTwoDigits(codes, index: &index)
@@ -410,7 +410,7 @@ extension RFC_3339.DateTime {
         year: Int
     ) throws(Error) -> Int {
         guard index + 2 <= codes.count else {
-            throw Error.invalidDay(String(decoding: codes[index...], as: UTF8.self))
+            throw Error.invalidDay(String(ascii: codes[index...]))
         }
 
         let day = try parseTwoDigits(codes, index: &index)
@@ -434,7 +434,7 @@ extension RFC_3339.DateTime {
 
     private static func parseHour(_ codes: [ASCII.Code], index: inout Int) throws(Error) -> Int {
         guard index + 2 <= codes.count else {
-            throw Error.invalidHour(String(decoding: codes[index...], as: UTF8.self))
+            throw Error.invalidHour(String(ascii: codes[index...]))
         }
 
         let hour = try parseTwoDigits(codes, index: &index)
@@ -447,7 +447,7 @@ extension RFC_3339.DateTime {
 
     private static func parseMinute(_ codes: [ASCII.Code], index: inout Int) throws(Error) -> Int {
         guard index + 2 <= codes.count else {
-            throw Error.invalidMinute(String(decoding: codes[index...], as: UTF8.self))
+            throw Error.invalidMinute(String(ascii: codes[index...]))
         }
 
         let minute = try parseTwoDigits(codes, index: &index)
@@ -460,7 +460,7 @@ extension RFC_3339.DateTime {
 
     private static func parseSecond(_ codes: [ASCII.Code], index: inout Int) throws(Error) -> Int {
         guard index + 2 <= codes.count else {
-            throw Error.invalidSecond(String(decoding: codes[index...], as: UTF8.self))
+            throw Error.invalidSecond(String(ascii: codes[index...]))
         }
 
         let second = try parseTwoDigits(codes, index: &index)
@@ -478,7 +478,7 @@ extension RFC_3339.DateTime {
         var fractionString = ""
 
         while index < codes.count, codes[index].isDigit {
-            fractionString.append(Character(codes[index]))
+            fractionString.append(Character(UnicodeScalar(codes[index].underlying)))
             index += 1
         }
 
@@ -516,7 +516,7 @@ extension RFC_3339.DateTime {
         }
 
         guard index + 6 <= codes.count else {
-            throw Error.invalidOffset(String(decoding: codes[index...], as: UTF8.self))
+            throw Error.invalidOffset(String(ascii: codes[index...]))
         }
 
         let sign: Int
@@ -581,7 +581,7 @@ extension RFC_3339.DateTime {
         code expected: ASCII.Code
     ) throws(Error) {
         guard index < codes.count && codes[index] == expected else {
-            throw Error.invalidFormat("expected '\(Character(expected))'")
+            throw Error.invalidFormat("expected '\(Character(UnicodeScalar(expected.underlying)))'")
         }
         index += 1
     }
@@ -594,7 +594,7 @@ extension RFC_3339.DateTime {
     ) throws(Error) {
         guard index < codes.count && (codes[index] == code1 || codes[index] == code2) else {
             throw Error.invalidFormat(
-                "expected '\(Character(code1))' or '\(Character(code2))'"
+                "expected '\(Character(UnicodeScalar(code1.underlying)))' or '\(Character(UnicodeScalar(code2.underlying)))'"
             )
         }
         index += 1

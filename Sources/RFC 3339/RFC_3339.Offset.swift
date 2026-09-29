@@ -113,10 +113,10 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
     ) where Buffer.Element == Byte {
         switch offset {
         case .utc:
-            buffer.append(ASCII.Code.Z)
+            buffer.append(ASCII.Code.Z.byte)
 
         case .unknownLocalOffset:
-            buffer.append(contentsOf: "-00:00".utf8)
+            buffer.append(contentsOf: [Byte](utf8: "-00:00"))
 
         case .offset(let seconds):
 
@@ -126,9 +126,9 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
             let hours = absSeconds / 3600
             let minutes = (absSeconds % 3600) / 60
 
-            buffer.append(sign)
+            buffer.append(sign.byte)
             appendTwoDigits(&buffer, hours)
-            buffer.append(ASCII.Code.colon)
+            buffer.append(ASCII.Code.colon.byte)
             appendTwoDigits(&buffer, minutes)
         }
     }
@@ -147,7 +147,7 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
 extension RFC_3339.Offset: ASCII.Parseable {
 
     public init(_ string: some StringProtocol) throws(Error) {
-        try self.init(ascii: [Byte](string.utf8))
+        try self.init(ascii: string.utf8.map(Byte.init(bitPattern:)))
     }
 
     public init<Bytes: Swift.Collection>(ascii bytes: Bytes) throws(Error)
@@ -158,7 +158,7 @@ extension RFC_3339.Offset: ASCII.Parseable {
 
         let arr: [ASCII.Code]
         do throws(ASCII.Code.Error) {
-            arr = try [ASCII.Code](bytes)
+            arr = try bytes.map { byte throws(ASCII.Code.Error) in try ASCII.Code(byte) }
         } catch {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
         }
@@ -225,9 +225,9 @@ extension RFC_3339.Offset: ASCII.Parseable {
         _ value: Int
     ) where Buffer.Element == Byte {
         if value < 10 {
-            buffer.append(ASCII.Code.`0`)
+            buffer.append(ASCII.Code.`0`.byte)
         }
-        buffer.append(contentsOf: String(value).utf8)
+        buffer.append(contentsOf: [Byte](utf8: String(value)))
     }
 }
 
