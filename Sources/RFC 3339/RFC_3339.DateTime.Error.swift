@@ -1,6 +1,6 @@
 extension RFC_3339.DateTime {
 
-    public enum Error: Swift.Error, Sendable, Equatable {
+    public enum Error: Swift::Error, Sendable, Equatable {
 
         case invalidFormat(_ value: String)
 

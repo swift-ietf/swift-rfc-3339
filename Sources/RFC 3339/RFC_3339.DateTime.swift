@@ -106,7 +106,7 @@ extension RFC_3339.DateTime: ASCII.Parseable {
         try self.init(ascii: string.utf8.map(Byte.init(bitPattern:)))
     }
 
-    public init<Bytes: Swift.Collection>(ascii bytes: Bytes) throws(Error)
+    public init<Bytes: Swift::Collection>(ascii bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
 
         guard bytes.count >= 20 else {
@@ -182,7 +182,7 @@ extension RFC_3339.DateTime: ASCII.Parseable {
     }
 }
 
-extension RFC_3339.DateTime: Swift.RawRepresentable {
+extension RFC_3339.DateTime: Swift::RawRepresentable {
 
     public var rawValue: String {
         String(decoding: serialized, as: UTF8.self)

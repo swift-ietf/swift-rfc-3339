@@ -32,7 +32,7 @@ extension RFC_3339.Offset {
 
 extension RFC_3339.Offset {
 
-    public enum Error: Swift.Error, Sendable, Equatable {
+    public enum Error: Swift::Error, Sendable, Equatable {
 
         case empty
 
@@ -150,7 +150,7 @@ extension RFC_3339.Offset: ASCII.Parseable {
         try self.init(ascii: string.utf8.map(Byte.init(bitPattern:)))
     }
 
-    public init<Bytes: Swift.Collection>(ascii bytes: Bytes) throws(Error)
+    public init<Bytes: Swift::Collection>(ascii bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
         guard !bytes.isEmpty else {
             throw Error.empty
@@ -231,7 +231,7 @@ extension RFC_3339.Offset: ASCII.Parseable {
     }
 }
 
-extension RFC_3339.Offset: Swift.RawRepresentable {
+extension RFC_3339.Offset: Swift::RawRepresentable {
 
     public var rawValue: String {
         String(decoding: serialized, as: UTF8.self)
