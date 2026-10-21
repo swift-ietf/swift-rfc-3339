@@ -1,7 +1,7 @@
 public import ASCII
+public import Binary
 public import Calendar
 public import Calendar_Gregorian
-public import Binary
 
 extension RFC_3339 {
 
@@ -558,8 +558,7 @@ extension RFC_3339.DateTime {
         }
     }
 
-    private static func parseTwoDigits(_ codes: [ASCII.Code], index: inout Int) throws(Error) -> Int
-    {
+    private static func parseTwoDigits(_ codes: [ASCII.Code], index: inout Int) throws(Error) -> Int {
         guard index + 2 <= codes.count,
             let d1 = digitValue(codes[index]),
             let d2 = digitValue(codes[index + 1])
