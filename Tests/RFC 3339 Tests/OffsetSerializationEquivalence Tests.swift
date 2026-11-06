@@ -1,7 +1,7 @@
 import RFC_3339
 import Testing
 
-extension RFC_3339.Offset.Test {
+extension `RFC_3339.Offset Tests`.Test {
     @Suite
     struct `Serialization Equivalence` {
 

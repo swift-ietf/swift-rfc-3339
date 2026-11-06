@@ -2,7 +2,9 @@ import Testing
 
 @testable import RFC_3339
 
-extension String {
+enum `String Tests` {}
+
+extension `String Tests` {
     @Suite("String+RFC_3339 - Parsing")
     struct Test {
         @Test
@@ -31,7 +33,7 @@ extension String {
     }
 }
 
-extension String.Test {
+extension `String Tests`.Test {
     @Suite("String+RFC_3339 - Validation")
     struct Validation {
         @Test
@@ -88,7 +90,9 @@ extension String.Test {
     }
 }
 
-extension RFC_3339.TimeWrapper {
+enum `RFC_3339.TimeWrapper Tests` {}
+
+extension `RFC_3339.TimeWrapper Tests` {
     @Suite("Time+RFC_3339 - Formatting")
     struct Test {
         @Test

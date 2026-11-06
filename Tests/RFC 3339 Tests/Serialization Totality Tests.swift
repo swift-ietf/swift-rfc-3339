@@ -3,7 +3,7 @@ import Testing
 
 @testable import RFC_3339
 
-extension RFC_3339.Offset.Test {
+extension `RFC_3339.Offset Tests`.Test {
     @Suite
     struct `Serialization Totality` {
         @Test
@@ -27,7 +27,7 @@ extension RFC_3339.Offset.Test {
     }
 }
 
-extension RFC_3339.DateTime.Test {
+extension `RFC_3339.DateTime Tests`.Test {
     @Suite
     struct `Serialization Totality` {
         @Test

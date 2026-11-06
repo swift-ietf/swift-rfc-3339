@@ -1,7 +1,9 @@
 import RFC_3339
 import Testing
 
-extension RFC_3339.DateTime {
+enum `RFC_3339.DateTime Tests` {}
+
+extension `RFC_3339.DateTime Tests` {
     @Suite("RFC_3339.DateTime - Serialization Equivalence")
     struct Test {
 

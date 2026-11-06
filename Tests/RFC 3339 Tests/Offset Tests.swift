@@ -2,7 +2,9 @@ import Testing
 
 @testable import RFC_3339
 
-extension RFC_3339.Offset {
+enum `RFC_3339.Offset Tests` {}
+
+extension `RFC_3339.Offset Tests` {
     @Suite("RFC_3339.Offset - Creation and Validation")
     struct Test {
         @Test
@@ -52,7 +54,7 @@ extension RFC_3339.Offset {
 
 }
 
-extension RFC_3339.Offset.Test {
+extension `RFC_3339.Offset Tests`.Test {
     @Suite
     struct `Offset Semantics` {
         @Test
