@@ -153,37 +153,41 @@ extension `RFC_3339.TimeWrapper Tests` {
     }
 }
 
-@Suite
-struct `String+RFC_3339 - Integration with Time` {
-    @Test
-    func `Round-trip via extensions`() throws {
-        let original = "2024-11-22T14:30:00.123Z"
-        let dt = try original.rfc3339.parse()
-        let formatted = dt.time.rfc3339.format(offset: dt.offset)
-        let dt2 = try formatted.rfc3339.parse()
+enum `String+RFC_3339 Tests` {}
 
-        #expect(dt.time.year == dt2.time.year)
-        #expect(dt.time.month == dt2.time.month)
-        #expect(dt.time.day == dt2.time.day)
-        #expect(dt.time.millisecond == dt2.time.millisecond)
-        #expect(dt.offset == dt2.offset)
-    }
+extension `String+RFC_3339 Tests` {
+    @Suite
+    struct `String+RFC_3339 - Integration with Time` {
+        @Test
+        func `Round-trip via extensions`() throws {
+            let original = "2024-11-22T14:30:00.123Z"
+            let dt = try original.rfc3339.parse()
+            let formatted = dt.time.rfc3339.format(offset: dt.offset)
+            let dt2 = try formatted.rfc3339.parse()
 
-    @Test
-    func `Validate then parse`() throws {
-        let timestamp = "2024-11-22T14:30:00Z"
+            #expect(dt.time.year == dt2.time.year)
+            #expect(dt.time.month == dt2.time.month)
+            #expect(dt.time.day == dt2.time.day)
+            #expect(dt.time.millisecond == dt2.time.millisecond)
+            #expect(dt.offset == dt2.offset)
+        }
 
-        #expect(timestamp.rfc3339.isValid)
+        @Test
+        func `Validate then parse`() throws {
+            let timestamp = "2024-11-22T14:30:00Z"
 
-        let dt = try timestamp.rfc3339.parse()
-        #expect(dt.time.year == 2024)
-    }
+            #expect(timestamp.rfc3339.isValid)
 
-    @Test
-    func `Format then validate`() throws {
-        let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
-        let formatted = time.rfc3339.format()
+            let dt = try timestamp.rfc3339.parse()
+            #expect(dt.time.year == 2024)
+        }
 
-        #expect(formatted.rfc3339.isValid)
+        @Test
+        func `Format then validate`() throws {
+            let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
+            let formatted = time.rfc3339.format()
+
+            #expect(formatted.rfc3339.isValid)
+        }
     }
 }
