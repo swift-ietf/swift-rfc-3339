@@ -153,8 +153,8 @@ extension `RFC_3339.TimeWrapper Tests` {
     }
 }
 
-@Suite("String+RFC_3339 - Integration with Time")
-struct StringTimeIntegrationTests {
+@Suite
+struct `String+RFC_3339 - Integration with Time` {
     @Test
     func `Round-trip via extensions`() throws {
         let original = "2024-11-22T14:30:00.123Z"
