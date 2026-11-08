@@ -47,10 +47,10 @@ extension RFC_3339.Offset {
             throw Error.offsetOutOfRange(seconds)
         }
 
-        if seconds == 0 {
-            self = .utc
+        self = if seconds == 0 {
+            .utc
         } else {
-            self = .offset(seconds: seconds)
+            .offset(seconds: seconds)
         }
     }
 }
@@ -200,10 +200,10 @@ extension RFC_3339.Offset: ASCII.Parseable {
         let offsetSeconds = sign * (hours * 3600 + minutes * 60)
 
         if offsetSeconds == 0 {
-            if sign == -1 {
-                self = .unknownLocalOffset
+            self = if sign == -1 {
+                .unknownLocalOffset
             } else {
-                self = .utc
+                .utc
             }
             return
         }
