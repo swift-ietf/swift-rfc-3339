@@ -4,7 +4,7 @@ import Testing
 enum `RFC_3339.DateTime Tests` {}
 
 extension `RFC_3339.DateTime Tests` {
-    @Suite("RFC_3339.DateTime - Serialization Equivalence")
+    @Suite
     struct Test {
 
         @Test

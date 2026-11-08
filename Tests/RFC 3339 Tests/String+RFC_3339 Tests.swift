@@ -5,7 +5,7 @@ import Testing
 enum `String Tests` {}
 
 extension `String Tests` {
-    @Suite("String+RFC_3339 - Parsing")
+    @Suite
     struct Test {
         @Test
         func `String extension: parse`() throws {
@@ -34,7 +34,7 @@ extension `String Tests` {
 }
 
 extension `String Tests`.Test {
-    @Suite("String+RFC_3339 - Validation")
+    @Suite
     struct Validation {
         @Test
         func `String extension: isValid for valid timestamp`() {
@@ -93,7 +93,7 @@ extension `String Tests`.Test {
 enum `RFC_3339.TimeWrapper Tests` {}
 
 extension `RFC_3339.TimeWrapper Tests` {
-    @Suite("Time+RFC_3339 - Formatting")
+    @Suite
     struct Test {
         @Test
         func `Time extension: format with default UTC`() throws {

@@ -5,7 +5,7 @@ import Testing
 enum `RFC_3339.Offset Tests` {}
 
 extension `RFC_3339.Offset Tests` {
-    @Suite("RFC_3339.Offset - Creation and Validation")
+    @Suite
     struct Test {
         @Test
         func `Create offset from valid seconds`() throws {
