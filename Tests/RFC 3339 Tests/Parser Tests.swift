@@ -109,23 +109,10 @@ extension `RFC_3339.DateTime Tests`.Test {
     @Suite
     struct `Parser Leap Second` {
         @Test
-        func `Parse leap second`() throws {
-            let input = "1990-12-31T23:59:60Z"
-            let dt = try RFC_3339.DateTime(input)
-
-            #expect(dt.time.second.value == 60)
-            #expect(dt.time.month == 12)
-            #expect(dt.time.day == 31)
-        }
-
-        @Test
-        func `Leap second on June 30`() throws {
-            let input = "2015-06-30T23:59:60Z"
-            let dt = try RFC_3339.DateTime(input)
-
-            #expect(dt.time.second.value == 60)
-            #expect(dt.time.month == 6)
-            #expect(dt.time.day == 30)
+        func `Parse leap second is refused`() {
+            #expect(throws: RFC_3339.DateTime.Error.unsupportedLeapSecond("2015-06-30T23:59:60Z")) {
+                _ = try RFC_3339.DateTime("2015-06-30T23:59:60Z")
+            }
         }
     }
 

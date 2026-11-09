@@ -60,7 +60,6 @@ extension `String Tests`.Test {
                 "2024-11-22T14:30:00-00:00",
                 "2024-11-22T14:30:00+05:30",
                 "1985-04-12T23:20:50.52Z",
-                "1990-12-31T23:59:60Z",
             ]
 
             for timestamp in validTimestamps {
@@ -81,6 +80,7 @@ extension `String Tests`.Test {
                 "2024-13-01T00:00:00Z",
                 "2024-02-30T00:00:00Z",
                 "2024-01-01T25:00:00Z",
+                "1990-12-31T23:59:60Z",
             ]
 
             for timestamp in invalidTimestamps {

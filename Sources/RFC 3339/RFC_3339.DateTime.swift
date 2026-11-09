@@ -146,17 +146,6 @@ extension RFC_3339.DateTime: ASCII.Parseable {
 
         let offset = try Self.parseOffset(arr, index: &index)
 
-        if second == 60 {
-            try RFC_3339.Validation.validateLeapSecond(
-                year: year,
-                month: month,
-                day: day,
-                hour: hour,
-                minute: minute,
-                offsetSeconds: offset.seconds
-            )
-        }
-
         guard index == arr.count else {
             throw Error.invalidFormat(String(decoding: bytes, as: UTF8.self))
         }
@@ -464,7 +453,10 @@ extension RFC_3339.DateTime {
         }
 
         let second = try parseTwoDigits(codes, index: &index)
-        guard second >= 0 && second <= 60 else {
+        if second == 60 {
+            throw Error.unsupportedLeapSecond(String(ascii: codes[...]))
+        }
+        guard second >= 0 && second <= 59 else {
             throw Error.invalidSecond("\(second)")
         }
 

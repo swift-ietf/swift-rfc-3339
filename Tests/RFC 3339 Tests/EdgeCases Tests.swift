@@ -48,21 +48,17 @@ extension `RFC_3339.DateTime Tests`.Test {
     @Suite
     struct `Leap Second` {
         @Test
-        func `Leap second on December 31`() throws {
-            let input = "1990-12-31T23:59:60Z"
-            let dt = try RFC_3339.DateTime(input)
-
-            #expect(dt.time.second.value == 60)
-            #expect(dt.time.month == 12)
-            #expect(dt.time.day == 31)
+        func `Leap second on December 31 is refused`() {
+            #expect(throws: RFC_3339.DateTime.Error.unsupportedLeapSecond("1990-12-31T23:59:60Z")) {
+                _ = try RFC_3339.DateTime("1990-12-31T23:59:60Z")
+            }
         }
 
         @Test
-        func `Leap second on June 30`() throws {
-            let input = "2015-06-30T23:59:60Z"
-            let dt = try RFC_3339.DateTime(input)
+        func `Last second of June 30 precedes the next midnight`() throws {
+            let dt = try RFC_3339.DateTime("2015-06-30T23:59:59Z")
 
-            #expect(dt.time.second.value == 60)
+            #expect(dt.time.second.value == 59)
             #expect(dt.time.month == 6)
             #expect(dt.time.day == 30)
         }
@@ -78,12 +74,10 @@ extension `RFC_3339.DateTime Tests`.Test {
         }
 
         @Test
-        func `Format leap second`() throws {
-            let time = try Gregorian.DateTime(year: 2015, month: 6, day: 30, hour: 23, minute: 59, second: 60)
-            let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
-            let formatted = String(dateTime)
-
-            #expect(formatted == "2015-06-30T23:59:60Z")
+        func `Leap second cannot be built to format`() {
+            #expect(throws: Gregorian.DateTime.Error.secondOutOfRange(60)) {
+                try Gregorian.DateTime(year: 2015, month: 6, day: 30, hour: 23, minute: 59, second: 60)
+            }
         }
     }
 

@@ -20,7 +20,7 @@ extension RFC_3339.DateTime {
 
         case invalidOffset(_ value: String)
 
-        case invalidLeapSecond(month: Int, day: Int)
+        case unsupportedLeapSecond(_ value: String)
     }
 }
 
@@ -46,7 +46,7 @@ extension RFC_3339.DateTime.Error: CustomStringConvertible {
             return "Invalid minute: '\(value)' (must be 00-59)"
 
         case .invalidSecond(let value):
-            return "Invalid second: '\(value)' (must be 00-60)"
+            return "Invalid second: '\(value)' (must be 00-59)"
 
         case .invalidFraction(let value):
             return "Invalid fractional seconds: '\(value)'"
@@ -54,9 +54,8 @@ extension RFC_3339.DateTime.Error: CustomStringConvertible {
         case .invalidOffset(let value):
             return "Invalid timezone offset: '\(value)'"
 
-        case .invalidLeapSecond(let month, let day):
-            return
-                "Leap second not allowed on month \(month), day \(day) (only June 30 or December 31)"
+        case .unsupportedLeapSecond(let value):
+            return "Unsupported leap second: '\(value)' (days are a uniform 86,400 seconds, so the second must be 00-59)"
         }
     }
 }
