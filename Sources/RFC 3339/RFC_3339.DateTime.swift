@@ -200,7 +200,7 @@ extension Time.Instant {
     public init(_ dateTime: RFC_3339.DateTime) {
         self.init(
             _unchecked: (),
-            secondsSinceUnixEpoch: Int64(dateTime.time.secondsSinceEpoch - dateTime.offset.seconds),
+            secondsSinceUnixEpoch: Int64(dateTime.time.secondsSinceEpoch - Int128(dateTime.offset.seconds)),
             nanosecondFraction: Int32(dateTime.time.totalNanoseconds)
         )
     }
