@@ -2,21 +2,21 @@ import Testing
 
 @testable import RFC_3339
 
-enum `RFC_3339.Offset Tests` {}
+enum `IETF.RFC.3339.Offset Tests` {}
 
-extension `RFC_3339.Offset Tests` {
+extension `IETF.RFC.3339.Offset Tests` {
     @Suite
     struct Test {
         @Test
         func `Create offset from valid seconds`() throws {
-            let offset = try RFC_3339.Offset(seconds: -28800)
+            let offset = try IETF.RFC.`3339`.Offset(seconds: -28800)
             #expect(offset == .offset(seconds: -28800))
             #expect(offset.seconds == -28800)
         }
 
         @Test
         func `Create offset from zero seconds becomes UTC`() throws {
-            let offset = try RFC_3339.Offset(seconds: 0)
+            let offset = try IETF.RFC.`3339`.Offset(seconds: 0)
             #expect(offset == .utc)
             #expect(offset.seconds == 0)
         }
@@ -24,57 +24,57 @@ extension `RFC_3339.Offset Tests` {
         @Test
         func `Maximum valid offset`() throws {
             let maxSeconds = 23 * 3600 + 59 * 60
-            let offset = try RFC_3339.Offset(seconds: maxSeconds)
+            let offset = try IETF.RFC.`3339`.Offset(seconds: maxSeconds)
             #expect(offset == .offset(seconds: 86340))
         }
 
         @Test
         func `Minimum valid offset`() throws {
             let minSeconds = -(23 * 3600 + 59 * 60)
-            let offset = try RFC_3339.Offset(seconds: minSeconds)
+            let offset = try IETF.RFC.`3339`.Offset(seconds: minSeconds)
             #expect(offset == .offset(seconds: -86340))
         }
 
         @Test
         func `Offset beyond maximum throws error`() {
             let tooLarge = 24 * 3600
-            #expect(throws: RFC_3339.Offset.Error.self) {
-                _ = try RFC_3339.Offset(seconds: tooLarge)
+            #expect(throws: IETF.RFC.`3339`.Offset.Error.self) {
+                _ = try IETF.RFC.`3339`.Offset(seconds: tooLarge)
             }
         }
 
         @Test
         func `Offset beyond minimum throws error`() {
             let tooSmall = -(24 * 3600)
-            #expect(throws: RFC_3339.Offset.Error.self) {
-                _ = try RFC_3339.Offset(seconds: tooSmall)
+            #expect(throws: IETF.RFC.`3339`.Offset.Error.self) {
+                _ = try IETF.RFC.`3339`.Offset(seconds: tooSmall)
             }
         }
     }
 
 }
 
-extension `RFC_3339.Offset Tests`.Test {
+extension `IETF.RFC.3339.Offset Tests`.Test {
     @Suite
     struct `Offset Semantics` {
         @Test
         func `UTC has zero seconds`() {
-            let offset = RFC_3339.Offset.utc
+            let offset = IETF.RFC.`3339`.Offset.utc
             #expect(offset.seconds == 0)
             #expect(offset.isUTC)
         }
 
         @Test
         func `Unknown local offset has zero seconds`() {
-            let offset = RFC_3339.Offset.unknownLocalOffset
+            let offset = IETF.RFC.`3339`.Offset.unknownLocalOffset
             #expect(offset.seconds == 0)
             #expect(offset.isUTC)
         }
 
         @Test
         func `UTC and unknown local offset are different`() {
-            let utc = RFC_3339.Offset.utc
-            let unknown = RFC_3339.Offset.unknownLocalOffset
+            let utc = IETF.RFC.`3339`.Offset.utc
+            let unknown = IETF.RFC.`3339`.Offset.unknownLocalOffset
 
             #expect(utc != unknown)
             #expect(utc.seconds == unknown.seconds)
@@ -83,7 +83,7 @@ extension `RFC_3339.Offset Tests`.Test {
 
         @Test
         func `Numeric offset with zero seconds becomes UTC via init`() throws {
-            let offset = try RFC_3339.Offset(seconds: 0)
+            let offset = try IETF.RFC.`3339`.Offset(seconds: 0)
             #expect(offset == .utc)
             #expect(offset != .unknownLocalOffset)
         }
@@ -93,25 +93,25 @@ extension `RFC_3339.Offset Tests`.Test {
     struct `Offset Equality` {
         @Test
         func `UTC equals itself`() {
-            #expect(RFC_3339.Offset.utc == .utc)
+            #expect(IETF.RFC.`3339`.Offset.utc == .utc)
         }
 
         @Test
         func `Unknown local offset equals itself`() {
-            #expect(RFC_3339.Offset.unknownLocalOffset == .unknownLocalOffset)
+            #expect(IETF.RFC.`3339`.Offset.unknownLocalOffset == .unknownLocalOffset)
         }
 
         @Test
         func `Same numeric offsets are equal`() {
-            let offset1 = RFC_3339.Offset.offset(seconds: -28800)
-            let offset2 = RFC_3339.Offset.offset(seconds: -28800)
+            let offset1 = IETF.RFC.`3339`.Offset.offset(seconds: -28800)
+            let offset2 = IETF.RFC.`3339`.Offset.offset(seconds: -28800)
             #expect(offset1 == offset2)
         }
 
         @Test
         func `Different numeric offsets are not equal`() {
-            let offset1 = RFC_3339.Offset.offset(seconds: -28800)
-            let offset2 = RFC_3339.Offset.offset(seconds: 19800)
+            let offset1 = IETF.RFC.`3339`.Offset.offset(seconds: -28800)
+            let offset2 = IETF.RFC.`3339`.Offset.offset(seconds: 19800)
             #expect(offset1 != offset2)
         }
     }
@@ -120,26 +120,26 @@ extension `RFC_3339.Offset Tests`.Test {
     struct `Offset Properties` {
         @Test
         func `isUTC true for UTC`() {
-            #expect(RFC_3339.Offset.utc.isUTC)
+            #expect(IETF.RFC.`3339`.Offset.utc.isUTC)
         }
 
         @Test
         func `isUTC true for unknown local offset`() {
-            #expect(RFC_3339.Offset.unknownLocalOffset.isUTC)
+            #expect(IETF.RFC.`3339`.Offset.unknownLocalOffset.isUTC)
         }
 
         @Test
         func `isUTC false for non-zero offsets`() {
-            let offset = RFC_3339.Offset.offset(seconds: -28800)
+            let offset = IETF.RFC.`3339`.Offset.offset(seconds: -28800)
             #expect(!offset.isUTC)
         }
 
         @Test
         func `Seconds property for various offsets`() {
-            #expect(RFC_3339.Offset.utc.seconds == 0)
-            #expect(RFC_3339.Offset.unknownLocalOffset.seconds == 0)
-            #expect(RFC_3339.Offset.offset(seconds: 3600).seconds == 3600)
-            #expect(RFC_3339.Offset.offset(seconds: -28800).seconds == -28800)
+            #expect(IETF.RFC.`3339`.Offset.utc.seconds == 0)
+            #expect(IETF.RFC.`3339`.Offset.unknownLocalOffset.seconds == 0)
+            #expect(IETF.RFC.`3339`.Offset.offset(seconds: 3600).seconds == 3600)
+            #expect(IETF.RFC.`3339`.Offset.offset(seconds: -28800).seconds == -28800)
         }
     }
 
@@ -160,10 +160,10 @@ extension `RFC_3339.Offset Tests`.Test {
 
             for (name, seconds) in timezones {
                 if seconds == 0 {
-                    let offset = try RFC_3339.Offset(seconds: seconds)
+                    let offset = try IETF.RFC.`3339`.Offset(seconds: seconds)
                     #expect(offset == .utc, "Failed for \(name)")
                 } else {
-                    let offset = try RFC_3339.Offset(seconds: seconds)
+                    let offset = try IETF.RFC.`3339`.Offset(seconds: seconds)
                     #expect(offset == .offset(seconds: seconds), "Failed for \(name)")
                     #expect(offset.seconds == seconds, "Failed for \(name)")
                 }

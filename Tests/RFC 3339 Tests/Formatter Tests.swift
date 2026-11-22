@@ -3,13 +3,13 @@ import Testing
 
 @testable import RFC_3339
 
-extension `RFC_3339.DateTime Tests`.Test {
+extension `IETF.RFC.3339.DateTime Tests`.Test {
     @Suite
     struct `Formatter UTC` {
         @Test
         func `Format simple UTC timestamp`() throws {
             let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
-            let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
+            let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .utc)
             let formatted = String(dateTime)
 
             #expect(formatted == "2024-11-22T14:30:00Z")
@@ -18,7 +18,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Format UTC uses 'Z' not '+00:00'`() throws {
             let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
-            let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
+            let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .utc)
             let formatted = String(dateTime)
 
             #expect(formatted.hasSuffix("Z"))
@@ -31,7 +31,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Format with positive offset`() throws {
             let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
-            let dateTime = RFC_3339.DateTime(time: time, offset: .offset(seconds: 19800))
+            let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .offset(seconds: 19800))
             let formatted = String(dateTime)
 
             #expect(formatted == "2024-11-22T14:30:00+05:30")
@@ -40,7 +40,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Format with negative offset`() throws {
             let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
-            let dateTime = RFC_3339.DateTime(time: time, offset: .offset(seconds: -28800))
+            let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .offset(seconds: -28800))
             let formatted = String(dateTime)
 
             #expect(formatted == "2024-11-22T14:30:00-08:00")
@@ -49,7 +49,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Format unknown local offset`() throws {
             let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
-            let dateTime = RFC_3339.DateTime(time: time, offset: .unknownLocalOffset)
+            let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .unknownLocalOffset)
             let formatted = String(dateTime)
 
             #expect(formatted == "2024-11-22T14:30:00-00:00")
@@ -70,7 +70,7 @@ extension `RFC_3339.DateTime Tests`.Test {
             ]
 
             for (seconds, expected) in testCases {
-                let dateTime = RFC_3339.DateTime(time: time, offset: .offset(seconds: seconds))
+                let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .offset(seconds: seconds))
                 let formatted = String(dateTime)
                 #expect(formatted == expected)
             }
@@ -82,7 +82,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Format with millisecond precision`() throws {
             let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
-            let dateTime = RFC_3339.DateTime(time: time, offset: .utc, precision: 3)
+            let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .utc, precision: 3)
             let formatted = String(dateTime)
 
             #expect(formatted == "2024-11-22T14:30:00.000Z")
@@ -112,7 +112,7 @@ extension `RFC_3339.DateTime Tests`.Test {
             ]
 
             for (precision, expected) in testCases {
-                let dateTime = RFC_3339.DateTime(time: time, offset: .utc, precision: precision)
+                let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .utc, precision: precision)
                 let formatted = String(dateTime)
                 #expect(formatted == expected)
             }
@@ -121,7 +121,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Format without precision omits zero fractional seconds`() throws {
             let time = try Gregorian.DateTime(year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0)
-            let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
+            let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .utc)
             let formatted = String(dateTime)
 
             #expect(formatted == "2024-01-01T00:00:00Z")
@@ -139,7 +139,7 @@ extension `RFC_3339.DateTime Tests`.Test {
                 second: 0,
                 millisecond: 123
             )
-            let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
+            let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .utc)
             let formatted = String(dateTime)
 
             #expect(formatted == "2024-01-01T00:00:00.123Z")
@@ -151,7 +151,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Format DateTime directly`() throws {
             let time = try Gregorian.DateTime(year: 2024, month: 11, day: 22, hour: 14, minute: 30, second: 0)
-            let dateTime = RFC_3339.DateTime(time: time, offset: .utc)
+            let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .utc)
             let formatted = String(dateTime)
 
             #expect(formatted == "2024-11-22T14:30:00Z")
@@ -168,7 +168,7 @@ extension `RFC_3339.DateTime Tests`.Test {
                 second: 0,
                 millisecond: 123
             )
-            let dateTime = RFC_3339.DateTime(time: time, offset: .utc, precision: 3)
+            let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .utc, precision: 3)
             let formatted = String(dateTime)
 
             #expect(formatted == "2024-11-22T14:30:00.123Z")

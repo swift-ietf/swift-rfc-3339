@@ -90,9 +90,9 @@ extension `String Tests`.Test {
     }
 }
 
-enum `RFC_3339.TimeWrapper Tests` {}
+enum `IETF.RFC.3339.TimeWrapper Tests` {}
 
-extension `RFC_3339.TimeWrapper Tests` {
+extension `IETF.RFC.3339.TimeWrapper Tests` {
     @Suite
     struct Test {
         @Test
@@ -153,11 +153,11 @@ extension `RFC_3339.TimeWrapper Tests` {
     }
 }
 
-enum `String+RFC_3339 Tests` {}
+enum `String+IETF.RFC.3339 Tests` {}
 
-extension `String+RFC_3339 Tests` {
+extension `String+IETF.RFC.3339 Tests` {
     @Suite
-    struct `String+RFC_3339 - Integration with Time` {
+    struct `String+IETF.RFC.3339 - Integration with Time` {
         @Test
         func `Round-trip via extensions`() throws {
             let original = "2024-11-22T14:30:00.123Z"

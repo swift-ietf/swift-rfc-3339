@@ -1,9 +1,9 @@
 import RFC_3339
 import Testing
 
-enum `RFC_3339.DateTime Tests` {}
+enum `IETF.RFC.3339.DateTime Tests` {}
 
-extension `RFC_3339.DateTime Tests` {
+extension `IETF.RFC.3339.DateTime Tests` {
     @Suite
     struct Test {
 
@@ -21,7 +21,7 @@ extension `RFC_3339.DateTime Tests` {
                 microsecond: 0,
                 nanosecond: 0
             )
-            let dateTime = RFC_3339.DateTime(
+            let dateTime = IETF.RFC.`3339`.DateTime(
                 time: time,
                 offset: .offset(seconds: 19800)
             )
@@ -29,7 +29,7 @@ extension `RFC_3339.DateTime Tests` {
             let viaASCII: [Byte] = dateTime.serialized
 
             var viaBinary: [Byte] = []
-            RFC_3339.DateTime.serialize(dateTime, into: &viaBinary)
+            IETF.RFC.`3339`.DateTime.serialize(dateTime, into: &viaBinary)
 
             #expect(viaASCII == viaBinary)
         }
@@ -48,7 +48,7 @@ extension `RFC_3339.DateTime Tests` {
                 microsecond: 456,
                 nanosecond: 0
             )
-            let dateTime = RFC_3339.DateTime(
+            let dateTime = IETF.RFC.`3339`.DateTime(
                 time: time,
                 offset: .offset(seconds: -28800),
                 precision: 6
@@ -57,7 +57,7 @@ extension `RFC_3339.DateTime Tests` {
             let viaASCII: [Byte] = dateTime.serialized
 
             var viaBinary: [Byte] = []
-            RFC_3339.DateTime.serialize(dateTime, into: &viaBinary)
+            IETF.RFC.`3339`.DateTime.serialize(dateTime, into: &viaBinary)
 
             #expect(viaASCII == viaBinary)
         }

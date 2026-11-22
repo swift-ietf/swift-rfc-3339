@@ -2,7 +2,7 @@ import Testing
 
 @testable import RFC_3339
 
-extension `RFC_3339.DateTime Tests`.Test {
+extension `IETF.RFC.3339.DateTime Tests`.Test {
     @Suite
     struct `Leap Second Offset` {
         @Test
@@ -14,16 +14,16 @@ extension `RFC_3339.DateTime Tests`.Test {
                 "1990-12-31T23:59:60Z",
                 "1990-12-31T12:00:60Z",
             ] {
-                #expect(throws: RFC_3339.DateTime.Error.unsupportedLeapSecond(input)) {
-                    _ = try RFC_3339.DateTime(input)
+                #expect(throws: IETF.RFC.`3339`.DateTime.Error.unsupportedLeapSecond(input)) {
+                    _ = try IETF.RFC.`3339`.DateTime(input)
                 }
             }
         }
 
         @Test
         func `Second 61 is an invalid second`() {
-            #expect(throws: RFC_3339.DateTime.Error.invalidSecond("61")) {
-                _ = try RFC_3339.DateTime("1990-12-31T23:59:61Z")
+            #expect(throws: IETF.RFC.`3339`.DateTime.Error.invalidSecond("61")) {
+                _ = try IETF.RFC.`3339`.DateTime("1990-12-31T23:59:61Z")
             }
         }
     }

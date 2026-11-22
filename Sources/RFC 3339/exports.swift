@@ -3,3 +3,4 @@
 @_exported public import Calendar
 @_exported public import Calendar_Gregorian
 @_exported public import Time
+@_exported public import IETF_RFC

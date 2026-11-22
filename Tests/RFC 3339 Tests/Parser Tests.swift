@@ -2,13 +2,13 @@ import Testing
 
 @testable import RFC_3339
 
-extension `RFC_3339.DateTime Tests`.Test {
+extension `IETF.RFC.3339.DateTime Tests`.Test {
     @Suite
     struct `Parser UTC` {
         @Test
         func `Parse simple UTC timestamp`() throws {
             let input = "2024-11-22T14:30:00Z"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
 
             #expect(dt.time.year == 2024)
             #expect(dt.time.month == 11)
@@ -22,7 +22,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Parse lowercase 'z' offset`() throws {
             let input = "2024-11-22T14:30:00z"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
 
             #expect(dt.time.year == 2024)
             #expect(dt.offset == .utc)
@@ -31,7 +31,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Parse +00:00 as UTC`() throws {
             let input = "2024-11-22T14:30:00+00:00"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
 
             #expect(dt.offset == .utc)
             #expect(dt.offset.seconds == 0)
@@ -39,8 +39,8 @@ extension `RFC_3339.DateTime Tests`.Test {
 
         @Test
         func `Z and +00:00 are semantically identical`() throws {
-            let withZ = try RFC_3339.DateTime("2024-11-22T14:30:00Z")
-            let withPlus = try RFC_3339.DateTime("2024-11-22T14:30:00+00:00")
+            let withZ = try IETF.RFC.`3339`.DateTime("2024-11-22T14:30:00Z")
+            let withPlus = try IETF.RFC.`3339`.DateTime("2024-11-22T14:30:00+00:00")
 
             #expect(withZ.offset == withPlus.offset)
             #expect(withZ.offset == .utc)
@@ -53,7 +53,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Parse timestamp with positive offset`() throws {
             let input = "2024-11-22T14:30:00+05:30"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
 
             #expect(dt.time.year == 2024)
             #expect(dt.offset == .offset(seconds: 19800))
@@ -62,7 +62,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Parse timestamp with negative offset`() throws {
             let input = "2024-11-22T14:30:00-08:00"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
 
             #expect(dt.time.year == 2024)
             #expect(dt.offset == .offset(seconds: -28800))
@@ -71,7 +71,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Parse unknown local offset`() throws {
             let input = "2024-11-22T14:30:00-00:00"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
 
             #expect(dt.offset == .unknownLocalOffset)
         }
@@ -82,7 +82,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Parse timestamp with fractional seconds`() throws {
             let input = "1985-04-12T23:20:50.52Z"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
 
             #expect(dt.time.year == 1985)
             #expect(dt.time.millisecond.value == 520)
@@ -100,7 +100,7 @@ extension `RFC_3339.DateTime Tests`.Test {
             ]
 
             for (input, expectedMillis) in inputs {
-                let dt = try RFC_3339.DateTime(input)
+                let dt = try IETF.RFC.`3339`.DateTime(input)
                 #expect(dt.time.millisecond.value == expectedMillis)
             }
         }
@@ -110,8 +110,8 @@ extension `RFC_3339.DateTime Tests`.Test {
     struct `Parser Leap Second` {
         @Test
         func `Parse leap second is refused`() {
-            #expect(throws: RFC_3339.DateTime.Error.unsupportedLeapSecond("2015-06-30T23:59:60Z")) {
-                _ = try RFC_3339.DateTime("2015-06-30T23:59:60Z")
+            #expect(throws: IETF.RFC.`3339`.DateTime.Error.unsupportedLeapSecond("2015-06-30T23:59:60Z")) {
+                _ = try IETF.RFC.`3339`.DateTime("2015-06-30T23:59:60Z")
             }
         }
     }
@@ -121,7 +121,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Parse lowercase 't' separator`() throws {
             let input = "2024-11-22t14:30:00Z"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
 
             #expect(dt.time.year == 2024)
             #expect(dt.time.hour.value == 14)
@@ -131,7 +131,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Parse lowercase 't' and 'z'`() throws {
             let input = "2024-11-22t14:30:00z"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
 
             #expect(dt.time.year == 2024)
             #expect(dt.offset == .utc)
@@ -145,7 +145,7 @@ extension `RFC_3339.DateTime Tests`.Test {
             let full = "timestamp: 2024-11-22T14:30:00Z end"
             let substring = full.dropFirst(11).dropLast(4)
 
-            let dt = try RFC_3339.DateTime(String(substring))
+            let dt = try IETF.RFC.`3339`.DateTime(String(substring))
 
             #expect(dt.time.year == 2024)
             #expect(dt.time.month == 11)

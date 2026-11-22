@@ -3,16 +3,16 @@ import Testing
 
 @testable import RFC_3339
 
-extension `RFC_3339.DateTime Tests`.Test {
+extension `IETF.RFC.3339.DateTime Tests`.Test {
     @Suite
     struct `Round Trip` {
         @Test
         func `Round-trip: parse then format`() throws {
             let original = "1985-04-12T23:20:50.52Z"
-            let dt = try RFC_3339.DateTime(original)
+            let dt = try IETF.RFC.`3339`.DateTime(original)
             let formatted = String(dt)
 
-            let dt2 = try RFC_3339.DateTime(formatted)
+            let dt2 = try IETF.RFC.`3339`.DateTime(formatted)
 
             #expect(dt.time.year == dt2.time.year)
             #expect(dt.time.month == dt2.time.month)
@@ -35,9 +35,9 @@ extension `RFC_3339.DateTime Tests`.Test {
             "2015-06-30T23:59:59.999999999Z",
         ])
         func `round Trip Various Timestamps`(timestamp: String) throws {
-            let dt = try RFC_3339.DateTime(timestamp)
+            let dt = try IETF.RFC.`3339`.DateTime(timestamp)
             let formatted = String(dt)
-            let dt2 = try RFC_3339.DateTime(formatted)
+            let dt2 = try IETF.RFC.`3339`.DateTime(formatted)
 
             #expect(dt.time.year == dt2.time.year)
             #expect(dt.time.month == dt2.time.month)
@@ -55,12 +55,12 @@ extension `RFC_3339.DateTime Tests`.Test {
         func `Round-trip with different case`() throws {
 
             let input = "2024-11-22t14:30:00z"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
             let formatted = String(dt)
 
             #expect(formatted == "2024-11-22T14:30:00Z")
 
-            let dt2 = try RFC_3339.DateTime(formatted)
+            let dt2 = try IETF.RFC.`3339`.DateTime(formatted)
             #expect(dt.time.year == dt2.time.year)
             #expect(dt.offset == dt2.offset)
         }
@@ -68,7 +68,7 @@ extension `RFC_3339.DateTime Tests`.Test {
         @Test
         func `Round-trip +00:00 normalizes to Z`() throws {
             let input = "2024-11-22T14:30:00+00:00"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
 
             #expect(dt.offset == .utc)
 
@@ -76,14 +76,14 @@ extension `RFC_3339.DateTime Tests`.Test {
 
             #expect(formatted == "2024-11-22T14:30:00Z")
 
-            let dt2 = try RFC_3339.DateTime(formatted)
+            let dt2 = try IETF.RFC.`3339`.DateTime(formatted)
             #expect(dt.offset == dt2.offset)
         }
 
         @Test
         func `Round-trip preserves unknown local offset`() throws {
             let input = "2024-11-22T14:30:00-00:00"
-            let dt = try RFC_3339.DateTime(input)
+            let dt = try IETF.RFC.`3339`.DateTime(input)
 
             #expect(dt.offset == .unknownLocalOffset)
 
@@ -91,7 +91,7 @@ extension `RFC_3339.DateTime Tests`.Test {
 
             #expect(formatted == "2024-11-22T14:30:00-00:00")
 
-            let dt2 = try RFC_3339.DateTime(formatted)
+            let dt2 = try IETF.RFC.`3339`.DateTime(formatted)
             #expect(dt.offset == dt2.offset)
             #expect(dt2.offset == .unknownLocalOffset)
         }
@@ -107,9 +107,9 @@ extension `RFC_3339.DateTime Tests`.Test {
             ]
 
             for input in testCases {
-                let dt = try RFC_3339.DateTime(input)
+                let dt = try IETF.RFC.`3339`.DateTime(input)
                 let formatted = String(dt)
-                let dt2 = try RFC_3339.DateTime(formatted)
+                let dt2 = try IETF.RFC.`3339`.DateTime(formatted)
 
                 #expect(dt.time.millisecond == dt2.time.millisecond)
                 #expect(dt.time.microsecond == dt2.time.microsecond)
@@ -128,12 +128,12 @@ extension `RFC_3339.DateTime Tests`.Test {
                 second: 0,
                 millisecond: 123
             )
-            let dateTime = RFC_3339.DateTime(time: time, offset: .utc, precision: 6)
+            let dateTime = IETF.RFC.`3339`.DateTime(time: time, offset: .utc, precision: 6)
 
             let formatted = String(dateTime)
             #expect(formatted == "2024-01-01T00:00:00.123000Z")
 
-            let dt2 = try RFC_3339.DateTime(formatted)
+            let dt2 = try IETF.RFC.`3339`.DateTime(formatted)
 
             #expect(dt2.time.millisecond.value == 123)
             #expect(dt2.time.microsecond.value == 0)

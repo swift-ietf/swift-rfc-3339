@@ -1,7 +1,7 @@
 public import ASCII
 public import Binary
 
-extension RFC_3339 {
+extension IETF.RFC.`3339` {
 
     public enum Offset: Sendable, Equatable, Hashable, Codable {
 
@@ -13,7 +13,7 @@ extension RFC_3339 {
     }
 }
 
-extension RFC_3339.Offset {
+extension IETF.RFC.`3339`.Offset {
 
     public var seconds: Int {
         switch self {
@@ -30,7 +30,7 @@ extension RFC_3339.Offset {
     }
 }
 
-extension RFC_3339.Offset {
+extension IETF.RFC.`3339`.Offset {
 
     public enum Error: Swift::Error, Sendable, Equatable {
 
@@ -56,7 +56,7 @@ extension RFC_3339.Offset {
     }
 }
 
-extension RFC_3339.Offset.Error: CustomStringConvertible {
+extension IETF.RFC.`3339`.Offset.Error: CustomStringConvertible {
     public var description: String {
         switch self {
         case .empty:
@@ -71,7 +71,7 @@ extension RFC_3339.Offset.Error: CustomStringConvertible {
     }
 }
 
-extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
+extension IETF.RFC.`3339`.Offset: ASCII.Serializable, Binary.Serializable {
 
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ value: Self,
@@ -145,7 +145,7 @@ extension RFC_3339.Offset: ASCII.Serializable, Binary.Serializable {
     }
 }
 
-extension RFC_3339.Offset: ASCII.Parseable {
+extension IETF.RFC.`3339`.Offset: ASCII.Parseable {
 
     public init(_ string: some StringProtocol) throws(Error) {
         try self.init(ascii: string.utf8.map(Byte.init(bitPattern:)))
@@ -233,7 +233,7 @@ extension RFC_3339.Offset: ASCII.Parseable {
     }
 }
 
-extension RFC_3339.Offset: Swift::RawRepresentable {
+extension IETF.RFC.`3339`.Offset: Swift::RawRepresentable {
 
     public var rawValue: String {
         String(decoding: serialized, as: UTF8.self)
@@ -248,7 +248,7 @@ extension RFC_3339.Offset: Swift::RawRepresentable {
     }
 }
 
-extension RFC_3339.Offset: CustomStringConvertible {
+extension IETF.RFC.`3339`.Offset: CustomStringConvertible {
 
     public var description: String {
         String(decoding: serialized, as: UTF8.self)

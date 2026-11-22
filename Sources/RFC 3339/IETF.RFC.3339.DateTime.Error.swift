@@ -1,4 +1,4 @@
-extension RFC_3339.DateTime {
+extension IETF.RFC.`3339`.DateTime {
 
     public enum Error: Swift::Error, Sendable, Equatable {
 
@@ -24,7 +24,7 @@ extension RFC_3339.DateTime {
     }
 }
 
-extension RFC_3339.DateTime.Error: CustomStringConvertible {
+extension IETF.RFC.`3339`.DateTime.Error: CustomStringConvertible {
     public var description: String {
         switch self {
         case .invalidFormat(let value):

@@ -3,7 +3,7 @@ public import Binary
 public import Calendar
 public import Calendar_Gregorian
 
-extension RFC_3339 {
+extension IETF.RFC.`3339` {
 
     public struct DateTime: Sendable {
 
@@ -30,9 +30,9 @@ extension RFC_3339 {
     }
 }
 
-extension RFC_3339.DateTime: Hashable {}
+extension IETF.RFC.`3339`.DateTime: Hashable {}
 
-extension RFC_3339.DateTime: ASCII.Serializable, Binary.Serializable {
+extension IETF.RFC.`3339`.DateTime: ASCII.Serializable, Binary.Serializable {
 
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ value: Self,
@@ -60,7 +60,7 @@ extension RFC_3339.DateTime: ASCII.Serializable, Binary.Serializable {
             appendFractionIfNonZero(&buffer, time: time)
         }
 
-        RFC_3339.Offset.serialize(value.offset, into: &buffer)
+        IETF.RFC.`3339`.Offset.serialize(value.offset, into: &buffer)
     }
 
     public static func serialize<Buffer: RangeReplaceableCollection>(
@@ -96,11 +96,11 @@ extension RFC_3339.DateTime: ASCII.Serializable, Binary.Serializable {
             appendFractionIfNonZero(&buffer, time: time)
         }
 
-        RFC_3339.Offset.serialize(dateTime.offset, into: &buffer)
+        IETF.RFC.`3339`.Offset.serialize(dateTime.offset, into: &buffer)
     }
 }
 
-extension RFC_3339.DateTime: ASCII.Parseable {
+extension IETF.RFC.`3339`.DateTime: ASCII.Parseable {
 
     public init(_ string: some StringProtocol) throws(Error) {
         try self.init(ascii: string.utf8.map(Byte.init(bitPattern:)))
@@ -171,7 +171,7 @@ extension RFC_3339.DateTime: ASCII.Parseable {
     }
 }
 
-extension RFC_3339.DateTime: Swift::RawRepresentable {
+extension IETF.RFC.`3339`.DateTime: Swift::RawRepresentable {
 
     public var rawValue: String {
         String(decoding: serialized, as: UTF8.self)
@@ -186,18 +186,18 @@ extension RFC_3339.DateTime: Swift::RawRepresentable {
     }
 }
 
-extension RFC_3339.DateTime: CustomStringConvertible {
+extension IETF.RFC.`3339`.DateTime: CustomStringConvertible {
 
     public var description: String {
         String(decoding: serialized, as: UTF8.self)
     }
 }
 
-extension RFC_3339.DateTime: Codable {}
+extension IETF.RFC.`3339`.DateTime: Codable {}
 
 extension Time.Instant {
 
-    public init(_ dateTime: RFC_3339.DateTime) {
+    public init(_ dateTime: IETF.RFC.`3339`.DateTime) {
         self.init(
             _unchecked: (),
             secondsSinceUnixEpoch: Int64(dateTime.time.secondsSinceEpoch - Int128(dateTime.offset.seconds)),
@@ -206,7 +206,7 @@ extension Time.Instant {
     }
 }
 
-extension RFC_3339.DateTime {
+extension IETF.RFC.`3339`.DateTime {
 
     private static var yearDomain: ClosedRange<Int> { 0...9999 }
 
@@ -284,7 +284,7 @@ extension RFC_3339.DateTime {
     }
 }
 
-extension RFC_3339.DateTime {
+extension IETF.RFC.`3339`.DateTime {
 
     private static func appendYear<Buffer: RangeReplaceableCollection>(
         _ buffer: inout Buffer,
@@ -360,7 +360,7 @@ extension RFC_3339.DateTime {
     }
 }
 
-extension RFC_3339.DateTime {
+extension IETF.RFC.`3339`.DateTime {
 
     private static func parseYear(_ codes: [ASCII.Code], index: inout Int) throws(Error) -> Int {
         guard index + 4 <= codes.count else {
@@ -497,7 +497,7 @@ extension RFC_3339.DateTime {
     private static func parseOffset(
         _ codes: [ASCII.Code],
         index: inout Int
-    ) throws(Error) -> RFC_3339.Offset {
+    ) throws(Error) -> IETF.RFC.`3339`.Offset {
         guard index < codes.count else {
             throw Error.invalidOffset("missing offset")
         }
@@ -543,8 +543,8 @@ extension RFC_3339.DateTime {
             return .utc
         }
 
-        do throws(RFC_3339.Offset.Error) {
-            return try RFC_3339.Offset(seconds: offsetSeconds)
+        do throws(IETF.RFC.`3339`.Offset.Error) {
+            return try IETF.RFC.`3339`.Offset(seconds: offsetSeconds)
         } catch {
             throw Error.invalidOffset("offset out of range: \(offsetSeconds)")
         }
